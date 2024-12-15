@@ -1,11 +1,13 @@
 import os
 import cmd
 import argparse
+from subprocess import run as sbrun
+
 from color.color.colorama import Fore as Foreground, init as coloroma_init
 coloroma_init()
 WINDOWS: bool = os.name == "nt"
 CLEAR_PREFIX: str = "cls" if WINDOWS else "clear"
-CLEAR_WITH_BANNER: bool = True
+CLEAR_WITH_BANNER: bool = False
 
 #CUSTOMIZABLE
 BANNER_TYPE: str = "family" # DO NOT PUT THE FILE EXTENSION
@@ -105,11 +107,20 @@ class coterm(cmd.Cmd):
             print(BANNERS.get_options(), "Don't put .txt in the settings.")
         else:
             print("\n\n\n\tNEEDS AN VALID OPTION TYPE. TYPE \"help getopts\".\n\n\n")
-        
+    
+    def do_sys(self, arg):
+        if WINDOWS:
+            arg = arg.split(" ")
+            sbrun(arg, shell=True)
+        else:
+            os.system(arg)
+
     def postcmd(self, stop, line):
         """Update the prompt after every command."""
         self.prompt = "{}>> ".format(os.getcwd())
         return stop
+
+
 
 if __name__ == "__main__":  
      coterm(COMPLETE_KEY).cmdloop()
