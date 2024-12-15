@@ -3,7 +3,6 @@ import cmd
 import argparse
 from color.color.colorama import Fore as Foreground, init as coloroma_init
 coloroma_init()
-
 WINDOWS: bool = os.name == "nt"
 CLEAR_PREFIX: str = "cls" if WINDOWS else "clear"
 CLEAR_WITH_BANNER: bool = True
@@ -13,8 +12,9 @@ BANNER_TYPE: str = "family" # DO NOT PUT THE FILE EXTENSION
 COMPLETE_KEY: str = "tab" # AUTO COMPLETE KEY
 
 class BANNERS:
-    def get_options(dir: str = "banners"):
-        return os.listdir(dir)
+    def get_options():
+        prefix = os.path.dirname(os.path.abspath(__file__))
+        return os.listdir(f"{prefix}\\banners") if WINDOWS else f"{prefix}/banners"
     
     def print_banner(file: str):
         os.system(CLEAR_PREFIX)
@@ -27,7 +27,8 @@ class BANNERS:
             return
 
     def print_banner_plus(name: str):
-            BANNERS.print_banner(f"banners\\{name}.txt" if WINDOWS else f"banners/{name}.txt")
+            prefix = os.path.dirname(os.path.abspath(__file__))
+            BANNERS.print_banner(f"{prefix}\\banners\\{name}.txt" if WINDOWS else f"{prefix}/banners/{name}.txt")
 
 
 class coterm(cmd.Cmd):
@@ -38,7 +39,10 @@ class coterm(cmd.Cmd):
     
     def do_cd(self, arg):
         """Changes the current directory."""
-        
+        try:
+            os.chdir(arg)
+        except Exception as ERROR:
+            print("ERROR:\n{}".format(ERROR))
 
     def do_ls(self, arg):
         """List the items in the current directory with an optional count."""
@@ -100,7 +104,12 @@ class coterm(cmd.Cmd):
         if arg.lower() == "banner":
             print(BANNERS.get_options(), "Don't put .txt in the settings.")
         else:
-            print("\n\n\n\tNEEDS AN VALID OPTION TYPE. TYPE \"help getops\".\n\n\n")
+            print("\n\n\n\tNEEDS AN VALID OPTION TYPE. TYPE \"help getopts\".\n\n\n")
+        
+    def postcmd(self, stop, line):
+        """Update the prompt after every command."""
+        self.prompt = "{}>> ".format(os.getcwd())
+        return stop
 
-if __name__ == "__main__":
+if __name__ == "__main__":  
      coterm(COMPLETE_KEY).cmdloop()
