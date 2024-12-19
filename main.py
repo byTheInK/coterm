@@ -3,42 +3,146 @@ import cmd
 import argparse
 import shlex
 import lib
+import shutil
 from bannerlib import BANNERS
 from subprocess import run as sbrun
 from random import randint as random_number
 
-WINDOWS: bool = os.name == "nt"
-CLEAR_PREFIX: str = "cls" if WINDOWS else "clear"
-
+CLIPBOARD: str = ""
+CLEAR_PREFIX: str = "cls"
+CURRENT: str = os.path.dirname(os.path.abspath(__file__))
 
 #CUSTOMIZABLE
-CLEAR_WITH_BANNER: bool = False # If enabled clears the screen completely
-CREATE_WHEN_WRITING: bool = True # When enabled creates the file when writing if the file isn't there
-LINE_PER_PAGE: int = 15
-BANNER_TYPE: str = "family" # DO NOT PUT THE FILE EXTENSION
-COMPLETE_KEY: str = "tab" # AUTO COMPLETE KEY
+clear_with_banner: bool = True # If enabled clears the screen completely
+create_when_writing: bool = True # When enabled creates the file when writing if the file isn't there
+line_per_page: int = 15
+banner_type: str = "family" # DO NOT PUT THE FILE EXTENSION
+complete_key: str = "tab" # AUTO COMPLETE KEY
 
 class coterm(cmd.Cmd):  
+    #CUSTOMIZABLE
     prompt = "{}>> ".format(os.getcwd())
 
-    def __init__(self, completekey = "tab", stdin = None, stdout = None):
-         super().__init__(completekey, stdin, stdout)
-         BANNERS.print_banner_plus(BANNER_TYPE)
+    def __init__(self, completekey="tab", stdin=None, stdout=None):
+        super().__init__(completekey, stdin, stdout)
+        global clear_with_banner
+        global create_when_writing
+        global line_per_page
+        global banner_type
+        global complete_key
+
+        config_dict = lib.config.initialize_config()
+
+        # Update global variables with values from the configuration
+        clear_with_banner = config_dict.get("CLEAR_WITH_BANNER", clear_with_banner)
+        create_when_writing = config_dict.get("CREATE_WHEN_WRITING", create_when_writing)
+        line_per_page = config_dict.get("LINE_PER_PAGE", line_per_page)
+        banner_type = config_dict.get("BANNER_TYPE", banner_type)
+        complete_key = config_dict.get("COMPLETE_KEY", complete_key)
+
+        print(banner_type)
+        BANNERS.print_banner_plus(banner_type)
+
+    def do_cut(self, arg):
+        global CLIPBOARD
+        try:
+            with open(arg, "r") as file: 
+                CLIPBOARD = file.read()
+            print("Copied file {} sucsessfully.".format(CLIPBOARD))
+            os.remove(arg)
+        except FileNotFoundError as ERROR:
+            print("FILE NOT FOUND:\n{}".format(ERROR))
+        except Exception as ERROR:
+            print("ERROR:\n{}".format(ERROR))
+
+    def do_copy(self, arg):
+        global CLIPBOARD
+        try:
+            with open(arg, "r") as file: 
+                CLIPBOARD = file.read()
+            print("Copied file {} sucsessfully.".format(CLIPBOARD))
+
+        except FileNotFoundError as ERROR:
+            print("FILE NOT FOUND:\n{}".format(ERROR))
+        except Exception as ERROR:
+            print("ERROR:\n{}".format(ERROR))
+        
+
+    def do_paste(self, arg):
+        global CLIPBOARD
+        try:
+            if os.path.exists(arg): raise FileExistsError('FILE ALREADY EXISTS!')
+            with open(arg, "w") as file:
+                file.write(CLIPBOARD)
+                print("Pasted file {} sucsessfully.".format(arg))
+
+        except FileExistsError as ERROR:
+            print("FILE ALREADY EXISTS:\n{}".format(ERROR))
+        except Exception as ERROR:
+            print("ERROR:\n{}".format(ERROR))
 
     def do_page(self, arg):
         try:
             with open(arg, "r") as file: 
-                lib.general.pagerfirst(file.read(), LINE_PER_PAGE)
+                lib.general.pagerfirst(file.read(), line_per_page)
         except FileNotFoundError as ERROR:
             print("FILE NOT FOUND:\n{}".format(ERROR))
         except Exception as ERROR:
             os.system(CLEAR_PREFIX)
 
+    def do_dupe(self, arg):
+        duper_parser = argparse.ArgumentParser(prog='dupe')
+        duper_parser.add_argument(
+            '-a', '--advanced', 
+            action="store_true", 
+            help="Duplicates in a more advanced way using copy2 (preserves metadata)."
+        )
+        duper_parser.add_argument('file', help="Path to the file to duplicate.")
+        duper_parser.add_argument('new', help="New file's path.")
+
+        arg = shlex.split(arg)
+        
+        if len(arg) < 2:
+            print("\n\n\n\tTHIS FUNCTION TAKES TWO ARGUMENTS!\n\n\n") 
+            return
+
+        try:
+            args = duper_parser.parse_args(arg)
+        except SystemExit:
+            return
+
+        try:
+            if args.advanced:
+                shutil.copy2(args.file, args.new)
+                print(f"Advanced copy complete: {args.file} -> {args.new}")
+            else:
+                shutil.copy(args.file, args.new)
+                print(f"Copy complete: {args.file} -> {args.new}")
+        except FileNotFoundError as error:
+            print(f"FILE NOT FOUND:\n{error}")
+        except Exception as error:
+            print(f"ERROR:\n{error}")
+
+
+    def do_rename(self, arg):
+        arg = shlex.split(arg)
+        if len(arg) < 2:
+            print("\n\n\n\tTHIS FUNCTION TAKES TWO ARGUMENTS!\n\n\n") 
+            return
+        
+        try:
+            os.rename(arg[0], arg[1])
+            print(f"Rename complete: {arg[0]} -> {arg[1]}")
+        except FileNotFoundError as ERROR:
+            print("FILE NOT FOUND:\n{}".format(ERROR))
+        except Exception as ERROR:
+            print("ERROR:\n{}".format(ERROR))
 
     def do_mkdir(self, arg):
         """Creates a directory."""
         try:
             os.mkdir(arg)
+            print("Created directory {} sucsessfully.".format(arg))
         except FileExistsError as ERROR:
             print("FILE ALREADY EXISTS:\n{}".format(ERROR))
         except Exception as ERROR:
@@ -48,6 +152,7 @@ class coterm(cmd.Cmd):
         """Creates a file."""
         try:
             with open(arg, "x"): pass
+            print("Created file {} sucsessfully.".format(arg))
         except FileExistsError as ERROR:
             print("FILE ALREADY EXISTS:\n{}".format(ERROR))
         except Exception as ERROR:
@@ -58,7 +163,7 @@ class coterm(cmd.Cmd):
     def do_cat(self, arg):
         try:
             with open(arg, "r") as file: 
-                print(file.read())
+                print(file  .read())
         except FileNotFoundError as ERROR:
             print("FILE NOT FOUND:\n{}".format(ERROR))
         except Exception as ERROR:
@@ -76,21 +181,6 @@ class coterm(cmd.Cmd):
     #CAT CAT CAT CAT CAT CAT CAT#
     #############################
 
-    def do_write(self, arg):
-        """Writes to a file."""
-        if len(arg) < 2: 
-            print("\n\n\n\tTHIS FUNCTION TAKES TWO ARGUMENTS!\n\n\n")
-            return
-
-        arg = shlex.split(arg)
-        try:
-            with open(arg[1], "r+") as file: 
-                file.write(arg[0])
-        except FileNotFoundError as ERROR:
-            print("FILE NOT FOUND:\n{}".format(ERROR))
-        except Exception as ERROR:
-            print("ERROR:\n{}".format(ERROR))
-
 
     def do_append(self, arg):
         """Appends to a file."""
@@ -102,6 +192,7 @@ class coterm(cmd.Cmd):
         try:
             with open(arg[1], "a") as file: 
                 file.write(arg[0])
+                print("Appending completed.")
         except FileNotFoundError as ERROR:
             print("FILE NOT FOUND:\n{}".format(ERROR))
         except Exception as ERROR:
@@ -117,9 +208,11 @@ class coterm(cmd.Cmd):
             return
 
         arg = shlex.split(arg)
+        mode = "w" if create_when_writing else "r+"
         try:
-            with open(arg[1], "r+") as file: 
+            with open(arg[1], mode) as file: 
                 file.write(arg[0])
+                print("Writing is completed.")
         except FileNotFoundError as ERROR:
             print("FILE NOT FOUND:\n{}\n Tip: You can create files with mkf command.".format(ERROR))
         except Exception as ERROR:
@@ -127,26 +220,11 @@ class coterm(cmd.Cmd):
 
     def do_rm(self, arg):
         """Removes a file."""
-
-        rm_parser = argparse.ArgumentParser(prog='rm')
-        rm_parser.add_argument('-f', '--forced', action="store_true", help="Ends processes before trying to delete the file.")
-        rm_parser.add_argument('file', help="Path to the file to delete.")
-        
         try:
-            args = rm_parser.parse_args(arg.split())
-        except SystemExit: pass
-
-        file_path = os.path.abspath(args.file)
-        
-        if args.forced:
-            print(f"Force-deleting. Please wait until the program ends the processes.")
-            lib.general.deattach_process(file_path)
-
-        try:
-            os.remove(file_path)
-            print(f"File {file_path} removed successfully.")
+            os.remove(arg)
+            print(f"File {arg} removed successfully.")
         except FileNotFoundError:
-            print(f"FILE NOT FOUND: {file_path}\nTip: You can create files with the 'mkf' command.")
+            print(f"FILE NOT FOUND: {arg}\nTip: You can create files with the 'mkf' command.")
         except Exception as e:
             print(f"ERROR: {e}")
 
@@ -166,6 +244,10 @@ class coterm(cmd.Cmd):
         except Exception as ERROR:
             print("ERROR:\n{}".format(ERROR))
 
+
+    def do_debug(self, arg): exec(arg)
+
+
     def do_ls(self, arg):
         """List the items in the current directory."""
         try:
@@ -174,6 +256,7 @@ class coterm(cmd.Cmd):
             ls_parser = argparse.ArgumentParser()
             ls_parser.add_argument("-c", "--count", action="store_true", help="Gives the count of items")
             ls_parser.add_argument("-l", "--long", action="store_true", help="Ls but with bunch of details.")
+            ls_parser.add_argument("-lg","--legacy", action="store_true", help="Ls but with bunch of details.")
 
 
             args = ls_parser.parse_args(arg.split())
@@ -184,6 +267,9 @@ class coterm(cmd.Cmd):
                 print("\nPERMISSON  L O G     SIZE MODIFICATION ENTRY")
                 lib.general.ls_long('.')
                 print()
+            elif args.legacy:
+                for item in items:
+                    print(item)
             else:
                 for index, item in enumerate(items):
                     print("[{}] = {}".format(index, item))
@@ -216,17 +302,17 @@ class coterm(cmd.Cmd):
     def do_clr(self, arg):
         """Clears the screen."""
         os.system(CLEAR_PREFIX)
-        BANNERS.print_banner_plus(BANNER_TYPE) if not CLEAR_WITH_BANNER else None
+        BANNERS.print_banner_plus(banner_type) if not clear_with_banner else None
 
     def do_clear(self, arg):
         """Clears the screen."""
         os.system(CLEAR_PREFIX)
-        BANNERS.print_banner_plus(BANNER_TYPE) if not CLEAR_WITH_BANNER else None
+        BANNERS.print_banner_plus(banner_type) if not clear_with_banner else None
 
     def do_cls(self, arg):
         """Clears the screen."""
         os.system(CLEAR_PREFIX)
-        BANNERS.print_banner_plus(BANNER_TYPE) if not CLEAR_WITH_BANNER else None
+        BANNERS.print_banner_plus(banner_type) if not clear_with_banner else None
 
     #CLR CLR CLR CLR CLR CLR CLR#   
     #############################
@@ -238,7 +324,7 @@ class coterm(cmd.Cmd):
 
     def do_banner(self, arg):
         """Prints out the banner."""
-        BANNERS.print_banner_plus(BANNER_TYPE)
+        BANNERS.print_banner_plus(banner_type)
     
     def do_getopts(self, arg):
         """
@@ -257,11 +343,8 @@ class coterm(cmd.Cmd):
         sys nano test.txt
         """
         try:
-            if WINDOWS:
-                arg = shlex.split(arg)
-                sbrun(arg, shell=True)
-            else:
-                os.system(arg)
+            arg = shlex.split(arg)
+            sbrun(arg, shell=True)
 
         except Exception as ERROR:
             print("\n{}".format(ERROR))
@@ -285,6 +368,33 @@ class coterm(cmd.Cmd):
         return stop
 
 
+    def do_settings(self, arg):
+        global clear_with_banner
+        global create_when_writing
+        global line_per_page
+        global banner_type
+        global complete_key
+
+        os.system(CLEAR_PREFIX)
+        print("1: General")
+        selection = input()
+
+        if selection == "1":
+            type, value = lib.config.general()
+
+            if value == 1 and type == 1: 
+                print("Please type a valid value")
+                input("Press enter to continue")
+                self.do_banner("")
+                return
+
+            if type == "CLEAR_WITH_BANNER": clear_with_banner = value
+            if type == "CREATE_WHEN_WRITING": create_when_writing = value
+            if type == "LINE_PER_PAGE": line_per_page = value
+            if type == "BANNER_TYPE": banner_type = value
+            
+
+            self.do_banner("")
 
 if __name__ == "__main__":  
-     coterm(COMPLETE_KEY).cmdloop()
+     coterm(complete_key).cmdloop()

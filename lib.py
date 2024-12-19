@@ -1,10 +1,10 @@
-import psutil.psutil as psutil
 import os
 import time
 import stat
+import bannerlib
 
-WINDOWS: bool = os.name == "nt"
-CLEAR_PREFIX: str = "cls" if WINDOWS else "clear"
+CLEAR_PREFIX: str = "cls"
+CURRENT: str = os.path.dirname(os.path.abspath(__file__))
 
 class general:
     def pagerfirst(text, lines_per_page=15):
@@ -22,27 +22,6 @@ class general:
                 input("(Press Enter to continue or Ctrl+C to exit)")
         input("(Press Enter to continue or Ctrl+C to exit)")
         os.system(CLEAR_PREFIX)
-
-    def deattach_process(path):
-        deattached = []
-        path = os.path.abspath(path)
-
-        for process in psutil.process_iter(['pid', 'name', 'open_files']):
-            try:
-                open_files = process.info['open_files']
-
-                if open_files:
-                    for f in open_files:
-                        if f.path == path:
-
-                            print(f"Terminating process {process.info['name']} (PID: {process.info['pid']}) using {path}")
-                            process.terminate()
-                            deattached.append(process.info['pid'])
-                            
-            except psutil.AccessDenied:
-                print("There are procsesses can't be deattached. Please run your terminal as an administrator if you accept the risks.")
-
-            except psutil.NoSuchProcess: continue
 
     def ls_long(dir):
         try:
@@ -73,11 +52,12 @@ class general:
                             stat.S_IRGRP, stat.S_IWGRP, stat.S_IXGRP,
                             stat.S_IROTH, stat.S_IWOTH, stat.S_IXOTH)
             ])
+
             permission_str = f"{file_type}{permissions}"
 
             hard_links = stats.st_nlink
 
-            owner = f"{stats.st_uid}"  # Change this to use pwd.getpwuid(stats.st_uid).pw_name
+            owner = f"{stats.st_uid}"
 
             group = f"{stats.st_gid}"
             size = stats.st_size
@@ -86,3 +66,89 @@ class general:
 
             
             print(f"{permission_str} {hard_links} {owner} {group} {size:>8} {mtime} {entry}")
+
+class config:
+    def initialize_config():
+        config_dict = {}
+
+        with open(f"{CURRENT}\\.settings\\.CLEAR_WITH_BANNER", "r") as file:
+            config_dict["CLEAR_WITH_BANNER"] = file.read()
+
+        with open(f"{CURRENT}\\.settings\\.CREATE_WHEN_WRITING", "r") as file:
+            config_dict["CREATE_WHEN_WRITING"] = file.read()
+
+        with open(f"{CURRENT}\\.settings\\.LINE_PER_PAGE", "r") as file:
+            config_dict["LINE_PER_PAGE"] = file.read()
+
+        with open(f"{CURRENT}\\.settings\\.BANNER_TYPE", "r") as file:
+            config_dict["BANNER_TYPE"] = file.read()
+        
+        return config_dict
+
+    def general():
+        os.system(CLEAR_PREFIX)
+        print("Settings")
+        print("1: Clear with banner")
+        print("2: Create when writing")
+        print("3: Line per page")
+        print("4: Banner type")
+
+        selection = input()
+
+        if selection == "1":
+            os.system(CLEAR_PREFIX)
+            selection = input("Clear with banner: (true/false)")
+            
+            if selection.lower() == "true":
+                with open(f"{CURRENT}\\.settings\\.CLEAR_WITH_BANNER", "w") as file:
+                    file.write(selection)
+                
+                return "CLEAR_WITH_BANNER", True
+
+            if selection.lower() == "false": 
+                with open(f"{CURRENT}\\.settings\\.CREATE_WHEN_WRITING", "w") as file:
+                    file.write(selection)
+
+                return "CLEAR_WITH_BANNER", False
+
+            else: return 1, 1
+        
+        elif selection == "2":
+            os.system(CLEAR_PREFIX)
+            selection = input("Create when writing: (true / false)")
+
+            if selection.lower() == "true": 
+                with open(f"{CURRENT}\\.settings\\.CREATE_WHEN_WRITING", "w") as file:
+                    file.write(selection)
+
+                return "CLEAR_WITH_BANNER", True
+            if selection.lower() == "false":
+                with open(f"{CURRENT}\\.settings\\.CREATE_WHEN_WRITING", "w") as file:
+                    file.write(selection)
+
+                return "CLEAR_WITH_BANNER", False
+            else: return 1, 1
+
+        elif selection == "3":
+            os.system(CLEAR_PREFIX)
+            selection = input("Line per page: (integer / whole number)")
+
+            try: selection = int(selection)
+            except Exception: return 1, 1
+
+            with open(f"{CURRENT}\\.settings\\.LINE_PER_PAGE", "w") as file:
+                file.write(str(selection))
+
+            return "LINE_PER_PAGE", selection
+        
+        elif selection == "4":
+            os.system(CLEAR_PREFIX)
+            selection = input("Banner type: ({})".format(bannerlib.BANNERS.get_options()))
+
+            if selection in bannerlib.BANNERS.get_options(): 
+                with open(f"{CURRENT}\\.settings\\.BANNER_TYPE", "w") as file:
+                    file.write(selection)
+
+                return "BANNER_TYPE", selection
+            
+            else: return 1, 1
