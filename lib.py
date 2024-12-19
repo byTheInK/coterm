@@ -121,12 +121,12 @@ class config:
                 with open(f"{CURRENT}\\.settings\\.CREATE_WHEN_WRITING", "w") as file:
                     file.write(selection)
 
-                return "CLEAR_WITH_BANNER", True
+                return "CREATE_WHEN_WRITING", True
             if selection.lower() == "false":
                 with open(f"{CURRENT}\\.settings\\.CREATE_WHEN_WRITING", "w") as file:
                     file.write(selection)
 
-                return "CLEAR_WITH_BANNER", False
+                return "CREATE_WHEN_WRITING", False
             else: return 1, 1
 
         elif selection == "3":

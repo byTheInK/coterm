@@ -33,9 +33,8 @@ class coterm(cmd.Cmd):
 
         config_dict = lib.config.initialize_config()
 
-        # Update global variables with values from the configuration
         clear_with_banner = config_dict.get("CLEAR_WITH_BANNER", clear_with_banner)
-        create_when_writing = config_dict.get("CREATE_WHEN_WRITING", create_when_writing)
+        create_when_writing = config_dict.get("CREATE_WHEN_WRITING", create_when_writing)   
         line_per_page = config_dict.get("LINE_PER_PAGE", line_per_page)
         banner_type = config_dict.get("BANNER_TYPE", banner_type)
         complete_key = config_dict.get("COMPLETE_KEY", complete_key)
@@ -256,7 +255,7 @@ class coterm(cmd.Cmd):
             ls_parser = argparse.ArgumentParser()
             ls_parser.add_argument("-c", "--count", action="store_true", help="Gives the count of items")
             ls_parser.add_argument("-l", "--long", action="store_true", help="Ls but with bunch of details.")
-            ls_parser.add_argument("-lg","--legacy", action="store_true", help="Ls but with bunch of details.")
+            ls_parser.add_argument("-lg","--legacy", action="store_true", help="Ls but old.")
 
 
             args = ls_parser.parse_args(arg.split())
