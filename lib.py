@@ -72,16 +72,19 @@ class config:
         config_dict = {}
 
         with open(f"{CURRENT}\\.settings\\.CLEAR_WITH_BANNER", "r") as file:
-            config_dict["CLEAR_WITH_BANNER"] = file.read()
+            config_dict["CLEAR_WITH_BANNER"] = True if file.read() == "true" else False
 
         with open(f"{CURRENT}\\.settings\\.CREATE_WHEN_WRITING", "r") as file:
-            config_dict["CREATE_WHEN_WRITING"] = file.read()
+            config_dict["CREATE_WHEN_WRITING"] = True if file.read() == "true" else False
 
         with open(f"{CURRENT}\\.settings\\.LINE_PER_PAGE", "r") as file:
-            config_dict["LINE_PER_PAGE"] = file.read()
+            config_dict["LINE_PER_PAGE"] = int(file.read())
 
         with open(f"{CURRENT}\\.settings\\.BANNER_TYPE", "r") as file:
             config_dict["BANNER_TYPE"] = file.read()
+        
+        with open(f"{CURRENT}\\.settings\\.USE_POWERSHELL", "r") as file:
+            config_dict["USE_POWERSHELL"] = True if file.read() == "true" else False
         
         return config_dict
 
@@ -92,6 +95,7 @@ class config:
         print("2: Create when writing")
         print("3: Line per page")
         print("4: Banner type")
+        print("5: Use Powershell")
 
         selection = input()
 
@@ -151,4 +155,20 @@ class config:
 
                 return "BANNER_TYPE", selection
             
+            else: return 1, 1
+        
+        elif selection == "5":
+            os.system(CLEAR_PREFIX)
+            selection = input("Use Powershell: (true / false)")
+
+            if selection.lower() == "true": 
+                with open(f"{CURRENT}\\.settings\\.USE_POWERSHELL", "w") as file:
+                    file.write(selection)
+
+                return "USE_POWERSHELL", True
+            if selection.lower() == "false":
+                with open(f"{CURRENT}\\.settings\\.USE_POWERSHELL", "w") as file:
+                    file.write(selection)
+
+                return "USE_POWERSHELL", False
             else: return 1, 1

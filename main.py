@@ -14,10 +14,11 @@ CURRENT: str = os.path.dirname(os.path.abspath(__file__))
 
 #CUSTOMIZABLE
 clear_with_banner: bool = True # If enabled clears the screen completely
-create_when_writing: bool = True # When enabled creates the file when writing if the file isn't there
+create_when_writing: bool = True
 line_per_page: int = 15
-banner_type: str = "family" # DO NOT PUT THE FILE EXTENSION
-complete_key: str = "tab" # AUTO COMPLETE KEY
+banner_type: str = "family"
+complete_key: str = "tab"
+use_powershell: bool = True
 
 class coterm(cmd.Cmd):  
     #CUSTOMIZABLE
@@ -30,14 +31,16 @@ class coterm(cmd.Cmd):
         global line_per_page
         global banner_type
         global complete_key
+        global use_powershell
 
         config_dict = lib.config.initialize_config()
 
-        clear_with_banner = config_dict.get("CLEAR_WITH_BANNER", clear_with_banner)
-        create_when_writing = config_dict.get("CREATE_WHEN_WRITING", create_when_writing)   
-        line_per_page = config_dict.get("LINE_PER_PAGE", line_per_page)
+        clear_with_banner = bool(config_dict.get("CLEAR_WITH_BANNER", clear_with_banner))
+        create_when_writing = bool(config_dict.get("CREATE_WHEN_WRITING", create_when_writing))   
+        line_per_page = int(config_dict.get("LINE_PER_PAGE", line_per_page))
         banner_type = config_dict.get("BANNER_TYPE", banner_type)
         complete_key = config_dict.get("COMPLETE_KEY", complete_key)
+        use_powershell = bool(config_dict.get("USE_POWERSHELL", use_powershell))
 
         print(banner_type)
         BANNERS.print_banner_plus(banner_type)
@@ -331,6 +334,7 @@ class coterm(cmd.Cmd):
         Options:
             - banner (Prints all of the usable banners. If you want your own banner check out the guide in https://github.com/byTheInK/coterm.)
         """
+
         if arg.lower() == "banner":
             print(BANNERS.get_options(), "Don't put .txt in the settings.")
         else:
@@ -342,8 +346,11 @@ class coterm(cmd.Cmd):
         sys nano test.txt
         """
         try:
-            arg = shlex.split(arg)
-            sbrun(arg, shell=True)
+            if use_powershell:
+                arg = shlex.split(arg)
+                sbrun(arg, shell=True)
+            else:
+                os.system(arg) 
 
         except Exception as ERROR:
             print("\n{}".format(ERROR))
@@ -373,6 +380,7 @@ class coterm(cmd.Cmd):
         global line_per_page
         global banner_type
         global complete_key
+        global use_powershell
 
         os.system(CLEAR_PREFIX)
         print("1: General")
@@ -391,7 +399,7 @@ class coterm(cmd.Cmd):
             if type == "CREATE_WHEN_WRITING": create_when_writing = value
             if type == "LINE_PER_PAGE": line_per_page = value
             if type == "BANNER_TYPE": banner_type = value
-            
+            if type == "USE_POWERSHELL": use_powershell = value
 
             self.do_banner("")
 
