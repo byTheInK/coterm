@@ -8,6 +8,7 @@ from bannerlib import BANNERS
 import subprocess
 import zipfile
 import tarfile
+import localutil.psutil as psutil
 from localping.pythonping import ping
 from webget import wget
 from random import randint as random_number
@@ -45,6 +46,8 @@ class coterm(cmd.Cmd):
         print(banner_type)
         BANNERS.print_banner_plus(banner_type)
 
+    def do_ip(self, arg): lib.general.ip()
+
     def do_memory(self, arg):
         try:
             lib.general.memory()
@@ -67,7 +70,7 @@ class coterm(cmd.Cmd):
                     print(f"Successfully added {arg[0]} to {arg[1]}")
             except Exception as ERROR:
                 print(f"ERROR:\n{ERROR}")
-    
+
     def do_ping(self, arg):
         try:
             ping(arg, verbose=True)
@@ -121,6 +124,9 @@ class coterm(cmd.Cmd):
         except Exception as ERROR:
             print("ERROR:\n{}".format(ERROR))
 
+    def do_usb(self, arg):
+        lib.general.list_usb()
+
     def do_copy(self, arg):
         global Clipboard
         try:
@@ -132,7 +138,6 @@ class coterm(cmd.Cmd):
             print("FILE NOT FOUND:\n{}".format(ERROR))
         except Exception as ERROR:
             print("ERROR:\n{}".format(ERROR))
-        
 
     def do_paste(self, arg):
         global Clipboard
@@ -155,6 +160,43 @@ class coterm(cmd.Cmd):
             print("FILE NOT FOUND:\n{}".format(ERROR))
         except Exception as ERROR:
             os.system(CLEAR_PREFIX)
+
+    def do_pendid(self, arg):
+        try:
+            parent = psutil.Process(int(arg))
+            for child in parent.children(recursive=True):
+                child.kill()
+            parent.kill()
+        except Exception as error:
+            print(f"ERROR:\n{error}")
+
+    def do_pend(self, arg):
+        try:
+            lib.general.endp(arg)
+            print("Ended process sucsessfully")
+        except Exception as error:
+            print(f"ERROR:\n{error}")
+    
+    def do_tasks(self, arg):
+        task_parser = argparse.ArgumentParser()
+        task_parser.add_argument("-a", "--all", action="store_true", help="Show all tasks.")
+        task_parser.add_argument("-s", "--simplified", action="store_true", help="Print a simplified version of tasks.")
+        
+        arg = arg.strip()
+        
+        args = task_parser.parse_args(arg.split())
+
+        if args.all:
+            print("Showing all tasks...")
+            lib.general.list_processes_ws()
+        elif args.simplified:
+            print("Showing simplified tasks...")
+            lib.general.list_processes_smp()
+        elif not arg:
+            print("No options selected. Showing default tasks...")
+            lib.general.list_processes()
+        else:
+            print("Invalid arguments. Use -a for all tasks or -s for simplified tasks.")
 
     def do_dupe(self, arg):
         duper_parser = argparse.ArgumentParser(prog='dupe')

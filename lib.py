@@ -3,11 +3,94 @@ import time
 import stat
 import bannerlib
 import localutil.psutil as psutil
+import usb.pywinusb.hid as usb_hid
+import socket
 
 CLEAR_PREFIX: str = "cls"
 CURRENT: str = os.path.dirname(os.path.abspath(__file__))
 
 class general:
+    def endp(PROCNAME):
+        for proc in psutil.process_iter():
+            if proc.name() == PROCNAME:
+                proc.kill()
+
+    def ip():
+        hostname = socket.gethostname()
+        IPAddr = socket.gethostbyname(hostname)
+
+        selection = input("Do you really want to continue?(y/n)")
+        if selection == "y":
+            print("\nYour Computer Name is:" + hostname)
+            print("Your Computer IP Address is:" + IPAddr)
+
+    def list_usb():
+        devices = usb_hid.HidDeviceFilter().get_devices()
+        for device in devices:
+            print(f"Device: {device.product_name}, Vendor ID: {device.vendor_id}, Product ID: {device.product_id}") 
+
+    def list_processes_smp():
+        processes = psutil.process_iter(['pid', 'name', 'username'])
+
+        for process in processes:
+            try:
+                print(f"PID: {process.info['pid']}, Name: {process.info['name']}, User: {process.info['username']}")
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess): pass
+
+    def list_processes():
+        processes = psutil.process_iter(['pid', 'name', 'username', 'status', 'cpu_percent', 'memory_info', 'create_time', 'num_threads'])
+
+        for process in processes:
+            try:
+                pid = process.info['pid']
+                name = process.info['name']
+                username = process.info['username']
+                status = process.info['status']
+                
+                if status not in ['stopped', 'zombie']:
+                    cpu_percent = process.info['cpu_percent']
+                    memory_info = process.info['memory_info']
+                    create_time = process.info['create_time']
+                    num_threads = process.info['num_threads']
+                    
+                    print(f"PID: {pid}")
+                    print(f"Name: {name}")
+                    print(f"Username: {username}")
+                    print(f"Status: {status}")
+                    print(f"CPU Usage (%): {cpu_percent}")
+                    print(f"Memory Usage (bytes): {memory_info.rss}")
+                    print(f"Creation Time: {create_time}")
+                    print(f"Number of Threads: {num_threads}")
+                    print("-" * 40)
+                    
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess): pass
+
+    def list_processes_ws():
+        processes = psutil.process_iter(['pid', 'name', 'username', 'status', 'cpu_percent', 'memory_info', 'create_time', 'num_threads'])
+
+        for process in processes:
+            try:
+                pid = process.info['pid']
+                name = process.info['name']
+                username = process.info['username']
+                status = process.info['status']
+                cpu_percent = process.info['cpu_percent']
+                memory_info = process.info['memory_info']
+                create_time = process.info['create_time']
+                num_threads = process.info['num_threads']
+                
+                print(f"PID: {pid}")
+                print(f"Name: {name}")
+                print(f"Username: {username}")
+                print(f"Status: {status}")
+                print(f"CPU Usage (%): {cpu_percent}")
+                print(f"Memory Usage (bytes): {memory_info.rss}")
+                print(f"Creation Time: {create_time}")
+                print(f"Number of Threads: {num_threads}")
+                print("-" * 40)
+                
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess): pass
+
     def memory():
         memory = psutil.virtual_memory()
         swap = psutil.swap_memory()
