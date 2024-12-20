@@ -5,10 +5,14 @@ import shlex
 import lib
 import shutil
 from bannerlib import BANNERS
-from subprocess import run as sbrun
+import subprocess
+import zipfile
+import tarfile
+from localping.pythonping import ping
+from webget import wget
 from random import randint as random_number
 
-CLIPBOARD: str = ""
+Clipboard: str = ""
 CLEAR_PREFIX: str = "cls"
 CURRENT: str = os.path.dirname(os.path.abspath(__file__))
 
@@ -18,10 +22,8 @@ create_when_writing: bool = True
 line_per_page: int = 15
 banner_type: str = "family"
 complete_key: str = "tab"
-use_powershell: bool = True
 
 class coterm(cmd.Cmd):  
-    #CUSTOMIZABLE
     prompt = "{}>> ".format(os.getcwd())
 
     def __init__(self, completekey="tab", stdin=None, stdout=None):
@@ -31,7 +33,6 @@ class coterm(cmd.Cmd):
         global line_per_page
         global banner_type
         global complete_key
-        global use_powershell
 
         config_dict = lib.config.initialize_config()
 
@@ -40,17 +41,80 @@ class coterm(cmd.Cmd):
         line_per_page = int(config_dict.get("LINE_PER_PAGE", line_per_page))
         banner_type = config_dict.get("BANNER_TYPE", banner_type)
         complete_key = config_dict.get("COMPLETE_KEY", complete_key)
-        use_powershell = bool(config_dict.get("USE_POWERSHELL", use_powershell))
 
         print(banner_type)
         BANNERS.print_banner_plus(banner_type)
 
+    def do_memory(self, arg):
+        try:
+            lib.general.memory()
+        except Exception as ERROR:
+            print(f"ERROR:\n{ERROR}")
+
+    def do_arczip(self, arg):
+        arg = shlex.split(arg)
+        if len(arg) < 2:
+            print("\n\n\n\tTHIS FUNCTION TAKES TWO ARGUMENTS!\n\n\n") 
+            return
+        else:
+            try:    
+                if not os.path.exists(arg[0]):
+                    print(f"Error: The file {arg[0]} does not exist.")
+                    return
+                
+                with zipfile.ZipFile(arg[1], "w", zipfile.ZIP_DEFLATED) as zipf:
+                    zipf.write(arg[0], arcname=os.path.basename(arg[0]))
+                    print(f"Successfully added {arg[0]} to {arg[1]}")
+            except Exception as ERROR:
+                print(f"ERROR:\n{ERROR}")
+    
+    def do_ping(self, arg):
+        try:
+            ping(arg, verbose=True)
+        except Exception as ERROR:
+            print(f"ERROR:\n{ERROR}")
+
+    def do_wget(self, arg):
+        try:
+            wget.download(arg)
+        except Exception as ERROR:
+            print(f"ERROR:\n{ERROR}")
+
+    def do_arctar(self, arg):
+        arg = shlex.split(arg)
+        if len(arg) < 2:
+            print("\n\n\n\tTHIS FUNCTION TAKES TWO ARGUMENTS!\n\n\n") 
+            return
+        else:
+            try:
+                if not os.path.exists(arg[0]):
+                    print(f"Error: The file {arg[0]} does not exist.")
+                    return
+                
+                with tarfile.open(arg[1], "w") as tarf:
+                    tarf.add(arg[0], arcname=os.path.basename(arg[0]))
+                    print(f"Successfully added {arg[0]} to {arg[1]}")
+            except Exception as ERROR:
+                print(f"ERROR:\n{ERROR}")
+
+    def do_lnk(self, arg):
+        arg = shlex.split(arg)
+        if len(arg) < 2:
+            print("\n\n\n\tTHIS FUNCTION TAKES TWO ARGUMENTS!\n\n\n") 
+            return
+        else:
+            try:
+                lib.general.link(arg[0],arg[1])
+                print("File {} linked to {}".format(arg[0],arg[1]))
+            except Exception or OSError as ERROR:
+                print("ERROR:\n{}".format(ERROR))
+
     def do_cut(self, arg):
-        global CLIPBOARD
+        global Clipboard
         try:
             with open(arg, "r") as file: 
-                CLIPBOARD = file.read()
-            print("Copied file {} sucsessfully.".format(CLIPBOARD))
+                Clipboard = file.read()
+            print("Copied file {} sucsessfully.".format(Clipboard))
             os.remove(arg)
         except FileNotFoundError as ERROR:
             print("FILE NOT FOUND:\n{}".format(ERROR))
@@ -58,11 +122,11 @@ class coterm(cmd.Cmd):
             print("ERROR:\n{}".format(ERROR))
 
     def do_copy(self, arg):
-        global CLIPBOARD
+        global Clipboard
         try:
             with open(arg, "r") as file: 
-                CLIPBOARD = file.read()
-            print("Copied file {} sucsessfully.".format(CLIPBOARD))
+                Clipboard = file.read()
+            print("Copied file {} sucsessfully.".format(Clipboard))
 
         except FileNotFoundError as ERROR:
             print("FILE NOT FOUND:\n{}".format(ERROR))
@@ -71,11 +135,11 @@ class coterm(cmd.Cmd):
         
 
     def do_paste(self, arg):
-        global CLIPBOARD
+        global Clipboard
         try:
             if os.path.exists(arg): raise FileExistsError('FILE ALREADY EXISTS!')
             with open(arg, "w") as file:
-                file.write(CLIPBOARD)
+                file.write(Clipboard)
                 print("Pasted file {} sucsessfully.".format(arg))
 
         except FileExistsError as ERROR:
@@ -346,11 +410,8 @@ class coterm(cmd.Cmd):
         sys nano test.txt
         """
         try:
-            if use_powershell:
-                arg = shlex.split(arg)
-                sbrun(arg, shell=True)
-            else:
-                os.system(arg) 
+            arg = shlex.split(arg)
+            subprocess.run(arg, shell=True)
 
         except Exception as ERROR:
             print("\n{}".format(ERROR))
@@ -380,7 +441,6 @@ class coterm(cmd.Cmd):
         global line_per_page
         global banner_type
         global complete_key
-        global use_powershell
 
         os.system(CLEAR_PREFIX)
         print("1: General")
@@ -399,7 +459,6 @@ class coterm(cmd.Cmd):
             if type == "CREATE_WHEN_WRITING": create_when_writing = value
             if type == "LINE_PER_PAGE": line_per_page = value
             if type == "BANNER_TYPE": banner_type = value
-            if type == "USE_POWERSHELL": use_powershell = value
 
             self.do_banner("")
 

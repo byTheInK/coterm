@@ -2,11 +2,37 @@ import os
 import time
 import stat
 import bannerlib
+import localutil.psutil as psutil
 
 CLEAR_PREFIX: str = "cls"
 CURRENT: str = os.path.dirname(os.path.abspath(__file__))
 
 class general:
+    def memory():
+        memory = psutil.virtual_memory()
+        swap = psutil.swap_memory()
+
+        total = memory.total / (1024 ** 2)
+        used = memory.used / (1024 ** 2)
+        free = memory.free / (1024 ** 2)
+        available = memory.available / (1024 ** 2)
+        percent = memory.percent
+
+        # Swap memory
+        swap_total = swap.total / (1024 ** 2)
+        swap_used = swap.used / (1024 ** 2) 
+        swap_free = swap.free / (1024 ** 2) 
+
+        print(f"Total: {total:.2f} MB")
+        print(f"Used: {used:.2f} MB")
+        print(f"Free: {free:.2f} MB")
+        print(f"Available: {available:.2f} MB")
+        print(f"Memory Usage: {percent}%")
+
+        print(f"\nSwap Total: {swap_total:.2f} MB")
+        print(f"Swap Used: {swap_used:.2f} MB")
+        print(f"Swap Free: {swap_free:.2f} MB")
+
     def pagerfirst(text, lines_per_page=15):
         lines = text.splitlines()
         total_lines = len(lines)
@@ -83,8 +109,6 @@ class config:
         with open(f"{CURRENT}\\.settings\\.BANNER_TYPE", "r") as file:
             config_dict["BANNER_TYPE"] = file.read()
         
-        with open(f"{CURRENT}\\.settings\\.USE_POWERSHELL", "r") as file:
-            config_dict["USE_POWERSHELL"] = True if file.read() == "true" else False
         
         return config_dict
 
@@ -95,7 +119,6 @@ class config:
         print("2: Create when writing")
         print("3: Line per page")
         print("4: Banner type")
-        print("5: Use Powershell")
 
         selection = input()
 
@@ -155,20 +178,4 @@ class config:
 
                 return "BANNER_TYPE", selection
             
-            else: return 1, 1
-        
-        elif selection == "5":
-            os.system(CLEAR_PREFIX)
-            selection = input("Use Powershell: (true / false)")
-
-            if selection.lower() == "true": 
-                with open(f"{CURRENT}\\.settings\\.USE_POWERSHELL", "w") as file:
-                    file.write(selection)
-
-                return "USE_POWERSHELL", True
-            if selection.lower() == "false":
-                with open(f"{CURRENT}\\.settings\\.USE_POWERSHELL", "w") as file:
-                    file.write(selection)
-
-                return "USE_POWERSHELL", False
             else: return 1, 1
