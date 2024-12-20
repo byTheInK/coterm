@@ -8,6 +8,7 @@ from bannerlib import BANNERS
 import subprocess
 import zipfile
 import tarfile
+import paramiko
 import localutil.psutil as psutil
 from localping.pythonping import ping
 from webget import wget
@@ -177,6 +178,41 @@ class coterm(cmd.Cmd):
         except Exception as error:
             print(f"ERROR:\n{error}")
     
+    def do_ssh(self, arg):
+        """
+        Execute commands on a remote server via SSH.
+
+        Usage:
+            ssh <hostname> <username> <password> <command>
+        """
+        args = shlex.split(arg)
+        if len(args) < 4:
+            print("\n\n\n\tTHIS FUNCTION TAKES FOUR ARGUMENTS!\n\n\n")
+            return
+
+        hostname, username, password, command = args[0], args[1], args[2], " ".join(args[3:])
+
+        try:
+            # Establish the SSH connection
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # Automatically add host keys
+            ssh.connect(hostname, username=username, password=password)
+
+            # Execute the command
+            stdin, stdout, stderr = ssh.exec_command(command)
+            print("STDOUT:\n", stdout.read().decode())
+            print("STDERR:\n", stderr.read().decode())
+
+            # Close the connection
+            ssh.close()
+
+        except paramiko.AuthenticationException:
+            print("Authentication failed. Please check your username and password.")
+        except paramiko.SSHException as e:
+            print(f"SSH error: {e}")
+        except Exception as e:
+            print(f"Error: {e}")
+
     def do_tasks(self, arg):
         task_parser = argparse.ArgumentParser()
         task_parser.add_argument("-a", "--all", action="store_true", help="Show all tasks.")
