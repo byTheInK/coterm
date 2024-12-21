@@ -2,8 +2,8 @@ import os
 import time
 import stat
 import bannerlib
-import localutil.psutil as psutil
-import usb.pywinusb.hid as usb_hid
+import psutil
+import pywinusb.hid as usb_hid
 import socket
 
 CLEAR_PREFIX: str = "cls"
@@ -21,8 +21,8 @@ class general:
 
         selection = input("Do you really want to continue?(y/n)")
         if selection == "y":
-            print("\nYour Computer Name is:" + hostname)
-            print("Your Computer IP Address is:" + IPAddr)
+            print("\nNAME: " + hostname)
+            print("IP: " + IPAddr)
 
     def list_usb():
         devices = usb_hid.HidDeviceFilter().get_devices()

@@ -9,9 +9,9 @@ import subprocess
 import zipfile
 import tarfile
 import paramiko
-import localutil.psutil as psutil
-from localping.pythonping import ping
-from webget import wget
+import psutil
+from pythonping import ping
+import wget
 from random import randint as random_number
 
 Clipboard: str = ""
@@ -153,15 +153,6 @@ class coterm(cmd.Cmd):
         except Exception as ERROR:
             print("ERROR:\n{}".format(ERROR))
 
-    def do_page(self, arg):
-        try:
-            with open(arg, "r") as file: 
-                lib.general.pagerfirst(file.read(), line_per_page)
-        except FileNotFoundError as ERROR:
-            print("FILE NOT FOUND:\n{}".format(ERROR))
-        except Exception as ERROR:
-            os.system(CLEAR_PREFIX)
-
     def do_pendid(self, arg):
         try:
             parent = psutil.Process(int(arg))
@@ -193,21 +184,18 @@ class coterm(cmd.Cmd):
         hostname, username, password, command = args[0], args[1], args[2], " ".join(args[3:])
 
         try:
-            # Establish the SSH connection
             ssh = paramiko.SSHClient()
-            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # Automatically add host keys
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             ssh.connect(hostname, username=username, password=password)
 
-            # Execute the command
             stdin, stdout, stderr = ssh.exec_command(command)
             print("STDOUT:\n", stdout.read().decode())
             print("STDERR:\n", stderr.read().decode())
 
-            # Close the connection
             ssh.close()
 
         except paramiko.AuthenticationException:
-            print("Authentication failed. Please check your username and password.")
+            print("Authentication failed")
         except paramiko.SSHException as e:
             print(f"SSH error: {e}")
         except Exception as e:

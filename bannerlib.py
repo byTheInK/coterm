@@ -1,5 +1,5 @@
 import os
-from color.color.colorama import Fore as Foreground, init as coloroma_init
+from colorama import Fore as Foreground, init as coloroma_init
 coloroma_init()
 
 WINDOWS: bool = os.name == "nt"
