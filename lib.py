@@ -211,13 +211,13 @@ class config:
             
             if selection.lower() == "true":
                 with open(f"{CURRENT}\\.settings\\.CLEAR_WITH_BANNER", "w") as file:
-                    file.write(selection)
+                    file.write(selection.lower())
                 
                 return "CLEAR_WITH_BANNER", True
 
             if selection.lower() == "false": 
-                with open(f"{CURRENT}\\.settings\\.CREATE_WHEN_WRITING", "w") as file:
-                    file.write(selection)
+                with open(f"{CURRENT}\\.settings\\.CLEAR_WITH_BANNER", "w") as file:
+                    file.write(selection.lower())
 
                 return "CLEAR_WITH_BANNER", False
 
@@ -229,12 +229,12 @@ class config:
 
             if selection.lower() == "true": 
                 with open(f"{CURRENT}\\.settings\\.CREATE_WHEN_WRITING", "w") as file:
-                    file.write(selection)
+                    file.write(selection.lower())
 
                 return "CREATE_WHEN_WRITING", True
             if selection.lower() == "false":
                 with open(f"{CURRENT}\\.settings\\.CREATE_WHEN_WRITING", "w") as file:
-                    file.write(selection)
+                    file.write(selection.lower())
 
                 return "CREATE_WHEN_WRITING", False
             else: return 1, 1
