@@ -1,9 +1,10 @@
-$RepoUrl = "https://github.com/byTheInK/coterm"
-$InstallPath = "$env:USERPROFILE\repos\coterm"
+$RepoUrl = "https://github.com/byTheInK/coterm" #Github repo
+$InstallPath = "$env:USERPROFILE\repos\coterm" # Install Path
 
 # Function to check if script is running as administrator
 function Check-Administrator {
     $currentUser = [Security.Principal.WindowsIdentity]::GetCurrent()
+    Write-Host $currentUser
     $principal = New-Object Security.Principal.WindowsPrincipal($currentUser)
     return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
