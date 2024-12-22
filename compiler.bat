@@ -1,1 +1,0 @@
-pyinstaller --onefile --add-data ".settings;.settings" --add-data "banners;banners" main.py
