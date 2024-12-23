@@ -52,11 +52,22 @@ class coterm(cmd.Cmd):
         """Runs a script"""
         arg = shlex.split(arg)
 
-        if len(arg) < 2: arg[1] = ""
+        if len(arg) < 2:
+            arg.append("")
 
-        if arg[0][-3:] != ".py": arg[0] += ".py"
+        if not arg[0].endswith(".py"):
+            arg[0] += ".py"
 
-        lang.main(f"{CURRENT}\\scripts\\{arg[0]}", arg.copy().remove(arg[0]))
+        class _conf_list:
+            _prompt = self.prompt
+            _clear_with_banner = clear_with_banner
+            _create_when_writing =create_when_writing 
+            _banner_type = banner_type
+            _line_per_page =line_per_page 
+            _complete_key = complete_key
+
+        lang.main(f"{CURRENT}\\scripts\\{arg[0]}", arg[1:], _conf_list)
+
 
     def do_mkscript(self, arg):
         """Creates a script."""
@@ -78,7 +89,7 @@ class coterm(cmd.Cmd):
             if not os.path.isfile(f"{CURRENT}\\scripts\\{arg}"): raise FileNotFoundError("{} is not a file".format(arg)); return
 
             os.system(f"notepad {CURRENT}\\scripts\\{arg}")
-        except FileExistsError as ERROR:
+        except FileNotFoundError as ERROR:
             print("FILE NOT FOUND:\n{}".format(ERROR))
         except Exception as ERROR:
             print("ERROR:\n{}".format(ERROR))
