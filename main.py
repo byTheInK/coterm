@@ -50,8 +50,13 @@ class coterm(cmd.Cmd):
 
     def do_run(self, arg):
         """Runs a script"""
-        if arg[-3:] != ".py": arg += ".py"
-        lang.main(f"{CURRENT}\\scripts\\{arg}")
+        arg = shlex.split(arg)
+
+        if len(arg) < 2: arg[1] = ""
+
+        if arg[0][-3:] != ".py": arg[0] += ".py"
+
+        lang.main(f"{CURRENT}\\scripts\\{arg[0]}", arg.copy().remove(arg[0]))
 
     def do_mkscript(self, arg):
         """Creates a script."""
