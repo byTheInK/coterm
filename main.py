@@ -1,6 +1,7 @@
 import os
 import cmd
 import argparse
+import lang
 import shlex
 import lib
 import shutil
@@ -46,6 +47,37 @@ class coterm(cmd.Cmd):
 
         print(banner_type)
         BANNERS.print_banner_plus(banner_type)
+
+    def do_run(self, arg):
+        """Runs a script"""
+        if arg[-3:] != ".py": arg += ".py"
+        lang.main(f"{CURRENT}\\scripts\\{arg}")
+
+    def do_mkscript(self, arg):
+        """Creates a script."""
+        try:
+            if arg[-3:] != ".py": arg += ".py"
+            with open(f"{CURRENT}\\scripts\\{arg}", "x"): pass
+            print("Created file {} sucsessfully.".format(arg))
+        except FileExistsError as ERROR:
+            print("FILE ALREADY EXISTS:\n{}".format(ERROR))
+        except Exception as ERROR:
+            print("ERROR:\n{}".format(ERROR))
+    
+    def do_openscript(self, arg):
+        """Creates a script."""
+        try:
+            if arg[-3:] != ".py": arg += ".py"
+
+            if not os.path.exists(f"{CURRENT}\\scripts\\{arg}"): raise FileNotFoundError("{} not found".format(arg)); return
+            if not os.path.isfile(f"{CURRENT}\\scripts\\{arg}"): raise FileNotFoundError("{} is not a file".format(arg)); return
+
+            os.system(f"notepad {CURRENT}\\scripts\\{arg}")
+        except FileExistsError as ERROR:
+            print("FILE NOT FOUND:\n{}".format(ERROR))
+        except Exception as ERROR:
+            print("ERROR:\n{}".format(ERROR))
+
 
     def do_ip(self, arg): lib.general.ip()
 
@@ -208,19 +240,21 @@ class coterm(cmd.Cmd):
         
         arg = arg.strip()
         
-        args = task_parser.parse_args(arg.split())
+        try:
+            args = task_parser.parse_args(arg.split())
 
-        if args.all:
-            print("Showing all tasks...")
-            lib.general.list_processes_ws()
-        elif args.simplified:
-            print("Showing simplified tasks...")
-            lib.general.list_processes_smp()
-        elif not arg:
-            print("No options selected. Showing default tasks...")
-            lib.general.list_processes()
-        else:
-            print("Invalid arguments. Use -a for all tasks or -s for simplified tasks.")
+            if args.all:
+                print("Showing all tasks...")
+                lib.general.list_processes_ws()
+            elif args.simplified:
+                print("Showing simplified tasks...")
+                lib.general.list_processes_smp()
+            elif not arg:
+                print("No options selected. Showing default tasks...")
+                lib.general.list_processes()
+            else:
+                print("Invalid arguments. Use -a for all tasks or -s for simplified tasks.")
+        except SystemExit: return
 
     def do_dupe(self, arg):
         duper_parser = argparse.ArgumentParser(prog='dupe')
@@ -290,19 +324,7 @@ class coterm(cmd.Cmd):
         except Exception as ERROR:
             print("ERROR:\n{}".format(ERROR))
 
-    #############################
-    #CAT CAT CAT CAT CAT CAT CAT#
     def do_cat(self, arg):
-        try:
-            with open(arg, "r") as file: 
-                print(file  .read())
-        except FileNotFoundError as ERROR:
-            print("FILE NOT FOUND:\n{}".format(ERROR))
-        except Exception as ERROR:
-            print("ERROR:\n{}".format(ERROR))
-
-    
-    def do_read(self, arg):
         try:
             with open(arg, "r") as file: 
                 print(file.read())
@@ -310,9 +332,8 @@ class coterm(cmd.Cmd):
             print("FILE NOT FOUND:\n{}".format(ERROR))
         except Exception as ERROR:
             print("ERROR:\n{}".format(ERROR))
-    #CAT CAT CAT CAT CAT CAT CAT#
-    #############################
 
+    def do_read(self, arg): self.do_cat(arg)
 
     def do_append(self, arg):
         """Appends to a file."""
@@ -376,9 +397,27 @@ class coterm(cmd.Cmd):
         except Exception as ERROR:
             print("ERROR:\n{}".format(ERROR))
 
-
+    
     def do_debug(self, arg): exec(arg)
 
+    def do_tree(self, arg):
+        """Display the directory tree structure"""
+        if not arg:
+            print("Error: Please provide a directory path.")
+            return
+
+        if not os.path.isdir(arg):
+            print(f"Error: '{arg}' is not a valid directory.")
+            return
+
+        for root, dirs, files in os.walk(arg):
+            level = root.replace(arg, '').count(os.sep)
+            indent = ' ' * 4 * level
+            print(f"{indent}[{os.path.basename(root)}]")
+
+            subindent = ' ' * 4 * (level + 1)
+            for file in files:
+                print(f"{subindent}{file}")
 
     def do_ls(self, arg):
         """List the items in the current directory."""
@@ -406,7 +445,7 @@ class coterm(cmd.Cmd):
                 for index, item in enumerate(items):
                     print("[{}] = {}".format(index, item))
 
-        except SystemExit: pass 
+        except SystemExit: return 
         
         except Exception as ERROR:
             print("ERROR:\n{}".format(ERROR))
@@ -473,7 +512,7 @@ class coterm(cmd.Cmd):
     def do_sys(self, arg):
         """
         Uses your terminal to execute commands.
-        sys nano test.txt
+        sys notepad test.txt
         """
         try:
             arg = shlex.split(arg)
