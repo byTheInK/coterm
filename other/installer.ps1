@@ -1,3 +1,6 @@
+# Deprecated
+# Deprecated
+
 $RepoUrl = "https://github.com/byTheInK/coterm"
 $InstallPath = "$env:USERPROFILE\repos\coterm"
 
