@@ -40,9 +40,10 @@ To install Coterm you need Git and Python to be installed. Here is a quick guide
 ## Cloning the Github Repository
 ```bash
 mkdir $env:APPDATA\coterm
-git clone https://github.com/user/coterm.git $env:APPDATA\coterm
 cd $env:APPDATA\coterm
+git clone https://github.com/byTheInK/coterm.git
+cd .\coterm
 pip install -r requirements.txt
-[Environment]::SetEnvironmentVariable("PATH", $env:PATH + ";$env:APPDATA\coterm", [EnvironmentVariableTarget]::Machine)
+[Environment]::SetEnvironmentVariable("PATH", $env:PATH + ";$env:APPDATA\coterm\coterm", [EnvironmentVariableTarget]::Machine)
 ```
 After this close and open the terminal and type `coterm`.
