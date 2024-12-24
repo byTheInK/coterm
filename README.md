@@ -18,8 +18,7 @@
 To get started with CoTerm, simply clone the repository and follow the installation instructions:
 
 ## Open Windows PowerShell
-- Press `Windows Key + R`
-- Type `powershell` and press the enter key
+- Open `PowerShell` as `administrator`
 
 ## Python and Git installation
 To install Coterm you need Git and Python to be installed. Here is a quick guide how to use them.

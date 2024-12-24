@@ -48,6 +48,9 @@ class coterm(cmd.Cmd):
         print(banner_type)
         BANNERS.print_banner_plus(banner_type)
 
+    def do_opencwd(self, arg):
+        os.system("explorer .")
+
     def do_run(self, arg):
         """Runs a script"""
         arg = shlex.split(arg)
@@ -400,6 +403,7 @@ class coterm(cmd.Cmd):
     def do_echo(self, arg): print(arg)
 
     def do_srch(self, arg):
+        """Searches a file or a directory."""
         if os.path.isfile(arg):
             print("{} exists and It is a file.".format(arg))
         elif os.path.isdir(arg):
@@ -417,7 +421,7 @@ class coterm(cmd.Cmd):
     def do_debug(self, arg): exec(arg)
 
     def do_tree(self, arg):
-        """Display the directory tree structure"""
+        """Display the directory tree structure."""
         if not arg:
             print("Error: Please provide a directory path.")
             return
@@ -466,8 +470,6 @@ class coterm(cmd.Cmd):
         except Exception as ERROR:
             print("ERROR:\n{}".format(ERROR))
 
-    #############################
-    #PWD PWD PWD PWD PWD PWD PWD#
     def do_dir(self, arg):
         """Prints put the current directory."""
         print("\n\n\n\tCURRENT DIRECTORY: {}\n\n\n".format(os.getcwd()))
@@ -479,12 +481,6 @@ class coterm(cmd.Cmd):
     def do_pwd(self, arg):
         """Prints put the current directory."""
         print("\n\n\n\tCURRENT DIRECTORY: {}\n\n\n".format(os.getcwd()))
-
-    #PWD PWD PWD PWD PWD PWD PWD#
-    #############################
-    #---------------------------#
-    #############################
-    #CLR CLR CLR CLR CLR CLR CLR#
 
     def do_clr(self, arg):
         """Clears the screen."""
@@ -501,9 +497,6 @@ class coterm(cmd.Cmd):
         os.system(CLEAR_PREFIX)
         BANNERS.print_banner_plus(banner_type) if not clear_with_banner else None
 
-    #CLR CLR CLR CLR CLR CLR CLR#   
-    #############################
-
     def do_exit(self, arg):
         """Exits the command line interface."""
         os.system(CLEAR_PREFIX)
@@ -517,11 +510,20 @@ class coterm(cmd.Cmd):
         """
         Gives options about a topic.
         Options:
-            - banner (Prints all of the usable banners. If you want your own banner check out the guide in https://github.com/byTheInK/coterm.)
+            - banner (Prints all of the usable banners. If you want your own banner check out the guide in https://github.com/byTheInK/coterm/blob/main/md/makeabanner.md.)
+            - ls
+            - tasks
+            - dupe
         """
 
         if arg.lower() == "banner":
             print(BANNERS.get_options(), "Don't put .txt in the settings.")
+        elif arg.lower() == "ls":
+            print("[-l, --long], [-lg, --legacy]")
+        elif arg.lower() == "tasks":
+            print("[-s, --simplified], [-a, --all]")
+        elif arg.lower() == "dupe":
+            print("[-a, --advanced]")
         else:
             print("\n\n\n\tNEEDS AN VALID OPTION TYPE. TYPE \"help getopts\".\n\n\n")
     
@@ -551,7 +553,6 @@ class coterm(cmd.Cmd):
 
 
     def postcmd(self, stop, line):
-        """Update the prompt after every command."""
         self.prompt = "{}>> ".format(os.getcwd())
         return stop
 
