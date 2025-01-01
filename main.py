@@ -4,6 +4,7 @@ import argparse
 import lang
 import shlex
 import lib
+import requests
 import shutil
 from bannerlib import BANNERS
 import subprocess
@@ -99,6 +100,26 @@ class coterm(cmd.Cmd):
 
 
     def do_ip(self, arg): lib.general.ip()
+
+    def do_rqs(self, arg):
+        """A request command. It is like curl in bash."""
+        rqs_parser = argparse.ArgumentParser()
+        rqs_parser.add_argument("-u", "--url", help="URL to send the request.")
+        rqs_parser.add_argument("-o", "--output", help="Output file to save the response.")
+        rqs_parser.add_argument("-m", "--method", help="HTTP method to use.")
+
+        args = rqs_parser.parse_args(shlex.split(arg))
+        
+        try:
+            response = requests.get(args.url) if not args.method else requests.request(args.method, args.url)
+            if args.output:
+                with open(args.output, "w") as file:
+                    file.write(response.text)
+            else:
+                print(response.text)
+        except Exception as ERROR:
+            print(f"ERROR:\n{ERROR}")
+
 
     def do_memory(self, arg):
         try:
