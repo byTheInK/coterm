@@ -242,36 +242,23 @@ class coterm(cmd.Cmd):
             print(f"ERROR:\n{error}")
     
     def do_ssh(self, arg):
-        """
-        Execute commands on a remote server via SSH.
+        ssh_parser = argparse.ArgumentParser()
+        ssh_parser.add_argument("-u", "--user", help="Username to connect to the server.")
+        ssh_parser.add_argument("-p", "--password", help="Password to connect to the server.")
+        ssh_parser.add_argument("-a", "--address", help="Address of the server.")
+        ssh_parser.add_argument("-c", "--command", help="Command to execute on the server.")
 
-        Usage:
-            ssh <hostname> <username> <password> <command>
-        """
-        args = shlex.split(arg)
-        if len(args) < 4:
-            print("\n\n\n\tTHIS FUNCTION TAKES FOUR ARGUMENTS!\n\n\n")
-            return
-
-        hostname, username, password, command = args[0], args[1], args[2], " ".join(args[3:])
+        args = ssh_parser.parse_args(shlex.split(arg))
 
         try:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(hostname, username=username, password=password)
-
-            stdin, stdout, stderr = ssh.exec_command(command)
-            print("STDOUT:\n", stdout.read().decode())
-            print("STDERR:\n", stderr.read().decode())
-
+            ssh.connect(args.address, username=args.user, password=args.password)
+            stdin, stdout, stderr = ssh.exec_command(args.command)
+            print(stdout.read().decode())
             ssh.close()
-
-        except paramiko.AuthenticationException:
-            print("Authentication failed")
-        except paramiko.SSHException as e:
-            print(f"SSH error: {e}")
-        except Exception as e:
-            print(f"Error: {e}")
+        except Exception as ERROR:
+            print(f"ERROR:\n{ERROR}")
 
     def do_tasks(self, arg):
         task_parser = argparse.ArgumentParser()
