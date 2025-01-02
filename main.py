@@ -241,24 +241,34 @@ class coterm(cmd.Cmd):
         except Exception as error:
             print(f"ERROR:\n{error}")
     
-    def do_ssh(self, arg):
-        ssh_parser = argparse.ArgumentParser()
-        ssh_parser.add_argument("-u", "--user", help="Username to connect to the server.")
-        ssh_parser.add_argument("-p", "--password", help="Password to connect to the server.")
-        ssh_parser.add_argument("-a", "--address", help="Address of the server.")
-        ssh_parser.add_argument("-c", "--command", help="Command to execute on the server.")
-
-        args = ssh_parser.parse_args(shlex.split(arg))
-
+    def do_sshlogin(self, arg):
+        arg = shlex.split(arg)
+        if len(arg) < 3:
+            print("\n\n\n\tTHIS FUNCTION TAKES THREE ARGUMENTS!\n\n\n") 
+            return
         try:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(args.address, username=args.user, password=args.password)
-            stdin, stdout, stderr = ssh.exec_command(args.command)
-            print(stdout.read().decode())
-            ssh.close()
+            ssh.connect(arg[0], username=arg[1], password=arg[2])
+            print("Connected to {} successfully.".format(arg[0]))
         except Exception as ERROR:
-            print(f"ERROR:\n{ERROR}")
+            print("ERROR:\n{}".format(ERROR))
+
+    def do_ssh(self, arg):
+        arg = shlex.split(arg)
+        if len(arg) < 3:
+            print("\n\n\n\tTHIS FUNCTION TAKES THREE ARGUMENTS!\n\n\n") 
+            return
+        try:
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh.connect(arg[0], username=arg[1])
+            stdin, stdout, stderr = ssh.exec_command(arg[2])
+            print("Connected to {} successfully.".format(arg[0]))
+            print("Command output:\n{}".format(stdout.read().decode()))
+            print("Command error (if any):\n{}".format(stderr.read().decode()))
+        except Exception as ERROR:
+            print("ERROR:\n{}".format(ERROR))
 
     def do_tasks(self, arg):
         task_parser = argparse.ArgumentParser()
