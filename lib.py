@@ -191,6 +191,9 @@ class config:
 
         with open(f"{CURRENT}\\.settings\\.BANNER_TYPE", "r") as file:
             config_dict["BANNER_TYPE"] = file.read()
+
+        with open(f"{CURRENT}\\.settings\\.SPACE_AFTER_COMMAND", "r") as file:
+            config_dict["SPACE_AFTER_COMMAND"] = file.read()
         
         
         return config_dict
@@ -202,12 +205,13 @@ class config:
         print("2: Create when writing")
         print("3: Line per page")
         print("4: Banner type")
+        print("5: Space after command")
 
         selection = input()
 
         if selection == "1":
             os.system(CLEAR_PREFIX)
-            selection = input("Clear with banner: (true/false)")
+            selection = input("Clear with banner: (true/false) ")
             
             if selection.lower() == "true":
                 with open(f"{CURRENT}\\.settings\\.CLEAR_WITH_BANNER", "w") as file:
@@ -225,7 +229,7 @@ class config:
         
         elif selection == "2":
             os.system(CLEAR_PREFIX)
-            selection = input("Create when writing: (true / false)")
+            selection = input("Create when writing: (true / false) ")
 
             if selection.lower() == "true": 
                 with open(f"{CURRENT}\\.settings\\.CREATE_WHEN_WRITING", "w") as file:
@@ -241,7 +245,7 @@ class config:
 
         elif selection == "3":
             os.system(CLEAR_PREFIX)
-            selection = input("Line per page: (integer / whole number)")
+            selection = input("Line per page: (integer / whole number) ")
 
             try: selection = int(selection)
             except Exception: return 1, 1
@@ -253,7 +257,7 @@ class config:
         
         elif selection == "4":
             os.system(CLEAR_PREFIX)
-            selection = input("Banner type: ({})".format(bannerlib.BANNERS.get_options()))
+            selection = input("Banner type: ({}) ".format(bannerlib.BANNERS.get_options()))
 
             if selection in bannerlib.BANNERS.get_options(): 
                 with open(f"{CURRENT}\\.settings\\.BANNER_TYPE", "w") as file:
@@ -262,3 +266,15 @@ class config:
                 return "BANNER_TYPE", selection
             
             else: return 1, 1
+
+        elif selection == "5":
+            os.system(CLEAR_PREFIX)
+            selection = input("Space after command: (integer / whole number) ")
+
+            try: selection = int(selection)
+            except Exception: return 1, 1
+
+            with open(f"{CURRENT}\\.settings\\.SPACE_AFTER_COMMAND", "w") as file:
+                file.write(str(selection))
+
+            return "SPACE_AFTER_COMMAND", selection

@@ -1,6 +1,7 @@
 import os
 import cmd
 import argparse
+from bannerlib import animallib
 import lang
 import shlex
 import lib
@@ -21,11 +22,12 @@ CLEAR_PREFIX: str = "cls"
 CURRENT: str = os.path.dirname(os.path.abspath(__file__))
 
 #CUSTOMIZABLE
-clear_with_banner: bool = True # If enabled clears the screen completely
+clear_with_banner: bool = True
 create_when_writing: bool = True
 line_per_page: int = 15
 banner_type: str = "family"
 complete_key: str = "tab"
+space_after_command: int = 0
 
 class coterm(cmd.Cmd):  
     prompt = "{}>> ".format(os.getcwd())
@@ -37,14 +39,16 @@ class coterm(cmd.Cmd):
         global line_per_page
         global banner_type
         global complete_key
+        global space_after_command
 
         config_dict = lib.config.initialize_config()
 
         clear_with_banner = bool(config_dict.get("CLEAR_WITH_BANNER", clear_with_banner))
-        create_when_writing = bool(config_dict.get("CREATE_WHEN_WRITING", create_when_writing))   
+        create_when_writing = bool(config_dict.get("CREATE_WHEN_WRITING", create_when_writing))
         line_per_page = int(config_dict.get("LINE_PER_PAGE", line_per_page))
         banner_type = config_dict.get("BANNER_TYPE", banner_type)
         complete_key = config_dict.get("COMPLETE_KEY", complete_key)
+        space_after_command = int(config_dict.get("SPACE_AFTER_COMMAND", space_after_command))
 
         print(banner_type)
         BANNERS.print_banner_plus(banner_type)
@@ -269,6 +273,15 @@ class coterm(cmd.Cmd):
             print("Command error (if any):\n{}".format(stderr.read().decode()))
         except Exception as ERROR:
             print("ERROR:\n{}".format(ERROR))
+
+    def do_animal(self, arg):
+        match arg:
+            case "dog":
+                print(animallib.dog)
+            case "cat":
+                print(animallib.cat)
+            case "cow":
+                print(animallib.cow)
 
     def do_tasks(self, arg):
         task_parser = argparse.ArgumentParser()
@@ -572,6 +585,8 @@ class coterm(cmd.Cmd):
 
     def postcmd(self, stop, line):
         self.prompt = "{}>> ".format(os.getcwd())
+        for i in range(space_after_command):
+            print()
         return stop
 
 
@@ -581,6 +596,7 @@ class coterm(cmd.Cmd):
         global line_per_page
         global banner_type
         global complete_key
+        global space_after_command
 
         os.system(CLEAR_PREFIX)
         print("1: General")
@@ -599,6 +615,7 @@ class coterm(cmd.Cmd):
             if type == "CREATE_WHEN_WRITING": create_when_writing = value
             if type == "LINE_PER_PAGE": line_per_page = value
             if type == "BANNER_TYPE": banner_type = value
+            if type == "SPACE_AFTER_COMMAND": space_after_command = value
 
             self.do_banner("")
 

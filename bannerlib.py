@@ -25,3 +25,29 @@ class BANNERS:
     def print_banner_plus(name: str):
             prefix = os.path.dirname(os.path.abspath(__file__))
             BANNERS.print_banner(f"{prefix}\\banners\\{name}.txt")
+
+class animallib:
+     cow = r"""
+           ^__^
+           (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+                
+                """
+     
+     dog = r"""
+        / \__
+        (   0\____
+        /        Oo
+        /   (_____/
+        /_____/   
+        
+        """
+     
+     cat = r"""
+         /\_/\  
+        ( o.o ) 
+         > ^ <
+         
+        """
