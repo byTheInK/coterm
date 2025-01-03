@@ -66,13 +66,14 @@ class coterm(cmd.Cmd):
         if not arg[0].endswith(".py"):
             arg[0] += ".py"
 
-        class _conf_list:
-            _prompt = self.prompt
-            _clear_with_banner = clear_with_banner
-            _create_when_writing =create_when_writing 
-            _banner_type = banner_type
-            _line_per_page =line_per_page 
-            _complete_key = complete_key
+        _conf_list = {
+            "prompt": self.prompt,
+            "clear_with_banner": clear_with_banner,
+            "create_when_writing":create_when_writing,
+            "banner_type": banner_type,
+            "space_after_command": space_after_command,
+            "line_per_page":line_per_page,
+            "complete_key": complete_key}
 
         lang.main(f"{CURRENT}\\scripts\\{arg[0]}", arg[1:], _conf_list)
 
