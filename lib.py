@@ -11,19 +11,19 @@ CURRENT: str = os.path.dirname(os.path.abspath(__file__))
 
 class CoTermErrors:
     class CoTermExtraError(Exception):
-        def __init__(self, message):
+        def __init__(self, message=""):
             self.message = message
             super().__init__(self.message)
     class CoTermPkgError(Exception):
-        def __init__(self, message):
+        def __init__(self, message=""):
             self.message = message
             super().__init__(self.message)
     class CoTermArgError(Exception):
-        def __init__(self, message):
+        def __init__(self, message=""):
             self.message = message
             super().__init__(self.message)
     class CoTerm404(Exception):
-        def __init__(self, message):
+        def __init__(self, message=""):
             self.message = message
             super().__init__(self.message)
 
