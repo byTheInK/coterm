@@ -1,11 +1,10 @@
 # CoTerm
 
-**CoTerm** is a versatile and customizable command-line interface (CLI) written in Python. It stands out with its unique features and extensive configuration options, making it an excellent choice for users who need a flexible and powerful tool for managing their terminal environments. It has a settings system which is not common in command-line-interfaces.
+**CoTerm** is a versatile and customizable command-line interface (CLI) written in Python. It stands out with its unique features and extensive configuration options, making it an excellent choice for users who need a flexible and powerful tool for managing their terminal environments. It has a settings system which is not common in command-line-interfaces. It is not designed to be your main editor. It is mainly designed for scripting.
 
 ## Warnings
 - CoTerm only supports Windows operating system
 - You need to install Git and Python before starting installation
-- While making script files you shouldn't use library file names. (Example: test, numpy, time, random)
 ## Key Features
 
 - **Highly Customizable**: CoTerm offers a range of configuration options, enabling you to personalize the CLI to match your workflow and preferences.
@@ -36,8 +35,20 @@ To install Coterm you need Git and Python to be installed. Here is a quick guide
 - Click 64 bit if you are in a modern computer else pick the 32 bit one (You may need to look at It)
 - Go through the installation process
 
-## Cloning the Github Repository
+## Setup
 ```bash
+mkdir $env:APPDATA\coterm
+cd $env:APPDATA\coterm
+git clone https://github.com/byTheInK/coterm.git
+cd .\coterm
+pip install -r requirements.txt
+[Environment]::SetEnvironmentVariable("PATH", $env:PATH + ";$env:APPDATA\coterm\coterm", [EnvironmentVariableTarget]::Machine)
+```
+After this close and open the terminal and type `coterm`.
+
+## Update
+```bash
+rm -Force "$env:APPDATA\coterm"
 mkdir $env:APPDATA\coterm
 cd $env:APPDATA\coterm
 git clone https://github.com/byTheInK/coterm.git

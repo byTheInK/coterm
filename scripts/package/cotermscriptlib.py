@@ -67,10 +67,10 @@ class script:
             return file.read()
 
 class Errors:
-    Coterm404 = lib.CoTermErrors.CoTerm404()
-    CoTermPkgError = lib.CoTermErrors.CoTermPkgError()
-    CotermExtraError = lib.CoTermErrors.CotermExtraError()
-    CotermArgError = lib.CoTermErrors.CotermArgError()
+    Coterm404 = lib.CoTermErrors.CoTerm404
+    CoTermPkgError = lib.CoTermErrors.CoTermPkgError
+    CotermExtraError = lib.CoTermErrors.CotermExtraError
+    CotermArgError = lib.CoTermErrors.CotermArgError
 
 class printlib:
     cat = bannerlib.animallib.cat

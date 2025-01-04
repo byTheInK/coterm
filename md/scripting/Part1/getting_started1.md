@@ -33,3 +33,5 @@ This area contains system information. In this script we get the prompt which is
 
 ## main
 This area is where the code gets executed.
+
+[Next part](https://github.com/byTheInK/coterm/blob/main/md/scripting/Part1/cotermscriptlib2.md)
