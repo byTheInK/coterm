@@ -10,7 +10,7 @@ CLEAR_PREFIX: str = "cls"
 CURRENT: str = os.path.dirname(os.path.abspath(__file__))
 
 class CoTermErrors:
-    class CotermExtraError(Exception):
+    class CoTermExtraError(Exception):
         def __init__(self, message):
             self.message = message
             super().__init__(self.message)
@@ -18,7 +18,7 @@ class CoTermErrors:
         def __init__(self, message):
             self.message = message
             super().__init__(self.message)
-    class CotermArgError(Exception):
+    class CoTermArgError(Exception):
         def __init__(self, message):
             self.message = message
             super().__init__(self.message)

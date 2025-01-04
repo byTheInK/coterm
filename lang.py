@@ -12,7 +12,7 @@ def main(file, args: list, _conf_list: dict):
         if not hasattr(module, "main"): raise CoTermErrors.CoTerm404
 
         if hasattr(module, "args"):
-            if not type(args) == list: raise CoTermErrors.CotermArgError
+            if not type(args) == list: raise CoTermErrors.CoTermArgError
                 
             module.args = args
 
