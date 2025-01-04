@@ -9,6 +9,24 @@ import socket
 CLEAR_PREFIX: str = "cls"
 CURRENT: str = os.path.dirname(os.path.abspath(__file__))
 
+class CoTermErrors:
+    class CotermExtraError(Exception):
+        def __init__(self, message):
+            self.message = message
+            super().__init__(self.message)
+    class CoTermPkgError(Exception):
+        def __init__(self, message):
+            self.message = message
+            super().__init__(self.message)
+    class CotermArgError(Exception):
+        def __init__(self, message):
+            self.message = message
+            super().__init__(self.message)
+    class CoTerm404(Exception):
+        def __init__(self, message):
+            self.message = message
+            super().__init__(self.message)
+
 class general:
     def endp(PROCNAME):
         for proc in psutil.process_iter():

@@ -61,3 +61,7 @@ class script:
     
     def delete_temporary_file(file_name: str):
         os.remove(f"{var.COTERM_DIR}\\script_temp\\{file_name}")
+    
+    def read_temporary_file(file_name: str):
+        with open(f"{var.COTERM_DIR}\\script_temp\\{file_name}", "r") as file:
+            return file.read()
