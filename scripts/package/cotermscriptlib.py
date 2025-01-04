@@ -65,3 +65,14 @@ class script:
     def read_temporary_file(file_name: str):
         with open(f"{var.COTERM_DIR}\\script_temp\\{file_name}", "r") as file:
             return file.read()
+
+class Errors:
+    Coterm404 = lib.CoTermErrors.CoTerm404()
+    CoTermPkgError = lib.CoTermErrors.CoTermPkgError()
+    CotermExtraError = lib.CoTermErrors.CotermExtraError()
+    CotermArgError = lib.CoTermErrors.CotermArgError()
+
+class printlib:
+    cat = bannerlib.animallib.cat
+    cow = bannerlib.animallib.cow
+    dog = bannerlib.animallib.dog
