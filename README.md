@@ -64,5 +64,5 @@ source setup.sh
 # Running
 To run CoTerm, simply type the code below into your terminal.
 ```bash
-source coterm.sh
+bash coterm
 ```
