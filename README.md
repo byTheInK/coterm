@@ -2,8 +2,8 @@
 
 **CoTerm** is a versatile and customizable command-line interface (CLI) written in Python. It stands out with its unique features and extensive configuration options, making it an excellent choice for users who need a flexible and powerful tool for managing their terminal environments. It has a settings system which is not common in command-line-interfaces. It is not designed to be your main editor. It is mainly designed for scripting.
 
-[!IMPORTANT]
-CoTerm is designed to be used in Linux but you can find in the old versions.
+> [!IMPORTANT]  
+> Crucial information necessary for users to succeed.
 
 ## Key Features
 
