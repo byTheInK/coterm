@@ -1,3 +1,9 @@
-venv/
-pycache/
+*.log
+*.tmp
+*.swp
+__pycache__/
 *.pyc
+*.pyo
+*.pyd
+venv/
+.vscode/

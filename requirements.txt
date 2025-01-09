@@ -1,8 +1,8 @@
 paramiko
-winregistry
 psutil
 pythonping
 colorama
 wget
-pywinusb
 requests
+psutil
+distro

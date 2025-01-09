@@ -2,8 +2,10 @@ import os
 import time
 import stat
 import bannerlib
+import argparse
 import psutil
 import socket
+import psutil
 
 CLEAR_PREFIX: str = "clear"
 CURRENT: str = os.path.dirname(os.path.abspath(__file__))
@@ -113,7 +115,6 @@ class general:
         available = memory.available / (1024 ** 2)
         percent = memory.percent
 
-        # Swap memory
         swap_total = swap.total / (1024 ** 2)
         swap_used = swap.used / (1024 ** 2) 
         swap_free = swap.free / (1024 ** 2) 
@@ -187,6 +188,49 @@ class general:
 
             
             print(f"{permission_str} {hard_links} {owner} {group} {size:>8} {mtime} {entry}")
+
+class advanced:
+    def top(self, arg):
+        parser = argparse.ArgumentParser(prog='top', description='Display system information.')
+        parser.add_argument('-c', '--cpu', action='store_true', help='Show CPU usage.')
+        parser.add_argument('-m', '--memory', action='store_true', help='Show memory usage.')
+        parser.add_argument('-d', '--disk', action='store_true', help='Show disk usage.')
+        parser.add_argument('-n', '--network', action='store_true', help='Show network usage.')
+        
+        args = parser.parse_args(arg.split())
+        
+        if args.cpu:
+            print("CPU Usage:")
+            for i, percentage in enumerate(psutil.cpu_percent(percpu=True, interval=1)):
+                print(f"  CPU {i}: {percentage}%")
+            print(f"  Total CPU: {psutil.cpu_percent(interval=1)}%")
+        
+        if args.memory:
+            mem = psutil.virtual_memory()
+            print("Memory Usage:")
+            print(f"  Total: {mem.total / (1024 ** 3):.2f} GB")
+            print(f"  Available: {mem.available / (1024 ** 3):.2f} GB")
+            print(f"  Used: {mem.used / (1024 ** 3):.2f} GB")
+            print(f"  Percentage: {mem.percent}%")
+        
+        if args.disk:
+            print("Disk Usage:")
+            for partition in psutil.disk_partitions():
+                usage = psutil.disk_usage(partition.mountpoint)
+                print(f"  {partition.device} ({partition.mountpoint}):")
+                print(f"    Total: {usage.total / (1024 ** 3):.2f} GB")
+                print(f"    Used: {usage.used / (1024 ** 3):.2f} GB")
+                print(f"    Free: {usage.free / (1024 ** 3):.2f} GB")
+                print(f"    Percentage: {usage.percent}%")
+        
+        if args.network:
+            net_io = psutil.net_io_counters()
+            print("Network Usage:")
+            print(f"  Bytes Sent: {net_io.bytes_sent / (1024 ** 2):.2f} MB")
+            print(f"  Bytes Received: {net_io.bytes_recv / (1024 ** 2):.2f} MB")
+        
+        if not (args.cpu or args.memory or args.disk or args.network):
+            parser.print_help()
 
 class config:
     def initialize_config():

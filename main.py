@@ -5,6 +5,8 @@ from bannerlib import animallib
 import lang
 import shlex
 import lib
+from distro import name as linux_distribution
+from getpass import getuser
 import requests
 import shutil
 from bannerlib import BANNERS
@@ -54,7 +56,9 @@ class coterm(cmd.Cmd):
         BANNERS.print_banner_plus(banner_type)
 
     def do_opencwd(self, arg):
+        """Open current working directory."""
         os.system("dolphin .")
+
 
     def do_run(self, arg):
         """Runs a script"""
@@ -126,15 +130,17 @@ class coterm(cmd.Cmd):
 
 
     def do_memory(self, arg):
+        """Gives memory information."""
         try:
             lib.general.memory()
         except Exception as ERROR:
             print(f"ERROR:\n{ERROR}")
 
     def do_arczip(self, arg):
+        """Compresses to zip."""
         arg = shlex.split(arg)
         if len(arg) < 2:
-            print("\n\n\n\tTHIS FUNCTION TAKES TWO ARGUMENTS!\n\n\n") 
+            print(" FUNCTION TAKES TWO ARGUMENTS!") 
             return
         else:
             try:    
@@ -155,6 +161,7 @@ class coterm(cmd.Cmd):
             print(f"ERROR:\n{ERROR}")
 
     def do_wget(self, arg):
+        """Gets a file from the web."""
         try:
             wget.download(arg)
             print()
@@ -162,9 +169,10 @@ class coterm(cmd.Cmd):
             print(f"ERROR:\n{ERROR}")
 
     def do_arctar(self, arg):
+        """Compresses tar."""
         arg = shlex.split(arg)
         if len(arg) < 2:
-            print("\n\n\n\tTHIS FUNCTION TAKES TWO ARGUMENTS!\n\n\n") 
+            print("THIS FUNCTION TAKES TWO ARGUMENTS!") 
             return
         else:
             try:
@@ -215,7 +223,12 @@ class coterm(cmd.Cmd):
         except Exception as ERROR:
             print("ERROR:\n{}".format(ERROR))
 
+    def do_distro(self, arg):
+        """Prints out the current distro."""
+        print(linux_distribution())
+
     def do_pendid(self, arg):
+        """Ends a process by it's id."""
         try:
             parent = psutil.Process(int(arg))
             for child in parent.children(recursive=True):
@@ -225,6 +238,7 @@ class coterm(cmd.Cmd):
             print(f"ERROR:\n{error}")
 
     def do_pend(self, arg):
+        """End a process by it's name."""
         try:
             lib.general.endp(arg)
             print("Ended process sucsessfully")
@@ -234,7 +248,7 @@ class coterm(cmd.Cmd):
     def do_sshlogin(self, arg):
         arg = shlex.split(arg)
         if len(arg) < 3:
-            print("\n\n\n\tTHIS FUNCTION TAKES THREE ARGUMENTS!\n\n\n") 
+            print("THIS FUNCTION TAKES THREE ARGUMENTS!") 
             return
         try:
             ssh = paramiko.SSHClient()
@@ -247,7 +261,7 @@ class coterm(cmd.Cmd):
     def do_ssh(self, arg):
         arg = shlex.split(arg)
         if len(arg) < 3:
-            print("\n\n\n\tTHIS FUNCTION TAKES THREE ARGUMENTS!\n\n\n") 
+            print("THIS FUNCTION TAKES THREE ARGUMENTS!") 
             return
         try:
             ssh = paramiko.SSHClient()
@@ -268,8 +282,27 @@ class coterm(cmd.Cmd):
                 print(animallib.cat)
             case "cow":
                 print(animallib.cow)
+    
+    def do_chperms(self, arg):
+        """Changes the permissions of a file."""
+
+        arg = shlex.split(arg)
+
+        if len(arg) < 2:
+            print("THIS FUNCTION TAKES TWO ARGUMENTS!") 
+            return
+        try:
+            os.chmod(arg[0], int(arg[1], 8))
+            print("Changed permissions of {} to {}.".format(arg[0], arg[1]))
+        except Exception as ERROR:
+            print("ERROR:\n{}".format(ERROR))
+    
+    def do_chmod(self, arg):
+        """Changes the permissions of a file."""
+        self.do_chperms(arg)
 
     def do_tasks(self, arg):
+        """Shows all of the tasks."""
         task_parser = argparse.ArgumentParser()
         task_parser.add_argument("-a", "--all", action="store_true", help="Show all tasks.")
         task_parser.add_argument("-s", "--simplified", action="store_true", help="Print a simplified version of tasks.")
@@ -305,7 +338,7 @@ class coterm(cmd.Cmd):
         arg = shlex.split(arg)
         
         if len(arg) < 2:
-            print("\n\n\n\tTHIS FUNCTION TAKES TWO ARGUMENTS!\n\n\n") 
+            print("THIS FUNCTION TAKES TWO ARGUMENTS!") 
             return
 
         try:
@@ -329,7 +362,7 @@ class coterm(cmd.Cmd):
     def do_rename(self, arg):
         arg = shlex.split(arg)
         if len(arg) < 2:
-            print("\n\n\n\tTHIS FUNCTION TAKES TWO ARGUMENTS!\n\n\n") 
+            print("THIS FUNCTION TAKES TWO ARGUMENTS!") 
             return
         
         try:
@@ -372,9 +405,12 @@ class coterm(cmd.Cmd):
     def do_read(self, arg): self.do_cat(arg)
 
     def do_append(self, arg):
-        """Appends to a file."""
+        """
+        Appends to a file.
+        append "Hello, World!" test.txt
+        """
         if len(arg) < 2: 
-            print("\n\n\n\tTHIS FUNCTION TAKES TWO ARGUMENTS!\n\n\n")
+            print("THIS FUNCTION TAKES TWO ARGUMENTS!")
             return
 
         arg = shlex.split(arg)
@@ -393,7 +429,7 @@ class coterm(cmd.Cmd):
         write "Hello, World!" test.txt
         """
         if len(arg) < 2: 
-            print("\n\n\n\tTHIS FUNCTION TAKES TWO ARGUMENTS!\n\n\n")
+            print("THIS FUNCTION TAKES TWO ARGUMENTS!")
             return
 
         arg = shlex.split(arg)
@@ -435,7 +471,14 @@ class coterm(cmd.Cmd):
             print("ERROR:\n{}".format(ERROR))
 
     
-    def do_debug(self, arg): exec(arg)
+    def do_debug(self, arg):
+        try:
+            exec(arg)
+        except SystemExit: pass
+
+    def do_usr(self, arg):
+        """Prints out the current user."""
+        print(getuser())
 
     def do_tree(self, arg):
         """Display the directory tree structure."""
@@ -489,15 +532,15 @@ class coterm(cmd.Cmd):
 
     def do_dir(self, arg):
         """Prints put the current directory."""
-        print("\n\n\n\tCURRENT DIRECTORY: {}\n\n\n".format(os.getcwd()))
+        print("CURRENT DIRECTORY: {}".format(os.getcwd()))
     
     def do_cwd(self, arg):
         """Prints put the current directory."""
-        print("\n\n\n\tCURRENT DIRECTORY: {}\n\n\n".format(os.getcwd()))
+        print("CURRENT DIRECTORY: {}".format(os.getcwd()))
 
     def do_pwd(self, arg):
         """Prints put the current directory."""
-        print("\n\n\n\tCURRENT DIRECTORY: {}\n\n\n".format(os.getcwd()))
+        print("CURRENT DIRECTORY: {}".format(os.getcwd()))
 
     def do_clr(self, arg):
         """Clears the screen."""
@@ -542,29 +585,37 @@ class coterm(cmd.Cmd):
         elif arg.lower() == "dupe":
             print("[-a, --advanced]")
         else:
-            print("\n\n\n\tNEEDS AN VALID OPTION TYPE. TYPE \"help getopts\".\n\n\n")
+            print("NEEDS AN VALID OPTION TYPE. TYPE \"help getopts\".")
     
-    def do_sys(self, arg):
-        """
-        Uses your terminal to execute commands.
-        sys notepad test.txt
-        """
-        try:
-            arg = shlex.split(arg)
-            subprocess.run(arg, shell=True)
-
+    def do_info(self, arg):
+        """Gives information about the system."""
+        try: 
+            lib.advanced().top(arg)
+        except SystemExit: pass
         except Exception as ERROR:
-            print("\n{}".format(ERROR))
+            print("ERROR:\n{}".format(ERROR))
+
+        def do_sys(self, arg):
+            """
+            Uses your terminal to execute commands.
+            sys notepad test.txt
+            """
+            try:
+                arg = shlex.split(arg)
+                subprocess.run(arg, shell=True)
+
+            except Exception as ERROR:
+                print("\n{}".format(ERROR))
 
     def do_random(self, arg):
         """Gives a random number between two numbers."""
         arg = arg.split()
 
         if len(arg) < 2:
-            print("\n\n\n\tTHIS FUNCTION TAKES TWO ARGUMENTS!\n\n\n")
+            print("THIS FUNCTION TAKES TWO ARGUMENTS!")
             return
         try:
-            print("\n\n\n\t{}\n\n\n".format(random_number(int(arg[0]), int(arg[1]))))
+            print(random_number(int(arg[0]), int(arg[1])))
         except Exception as ERROR:
             print("ERROR:\n{} Please put integers if you didn't.".format(ERROR))
 
