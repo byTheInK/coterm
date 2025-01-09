@@ -12,5 +12,6 @@ source "$SCRIPT_DIR/venv/bin/activate"
 echo "Installed required packages."
 sleep 2
 
+export PATH="$~/coterm:$PATH"
 echo "Successfully installed CoTerm"
 sleep 1

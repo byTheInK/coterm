@@ -2,9 +2,9 @@
 
 **CoTerm** is a versatile and customizable command-line interface (CLI) written in Python. It stands out with its unique features and extensive configuration options, making it an excellent choice for users who need a flexible and powerful tool for managing their terminal environments. It has a settings system which is not common in command-line-interfaces. It is not designed to be your main editor. It is mainly designed for scripting.
 
-## Warnings
-- CoTerm only supports Windows operating system
-- You need to install Git and Python before starting installation
+[!IMPORTANT]
+CoTerm is designed to be used in Linux but you can find in the old versions.
+
 ## Key Features
 
 - **Highly Customizable**: CoTerm offers a range of configuration options, enabling you to personalize the CLI to match your workflow and preferences.
@@ -16,44 +16,53 @@
 
 To get started with CoTerm, simply clone the repository and follow the installation instructions:
 
-## Open Windows PowerShell
-- Open `PowerShell` as `administrator`
+## First Part: Python
+To install CoTerm you first need Python to be installed. Installation can change depending on your distribution.
 
-## Python and Git installation
-To install Coterm you need Git and Python to be installed. Here is a quick guide how to use them.
-
-### Install Python
-- Go to the [Python's website](https://www.python.org/)
-- Go to the downloads tab and select Windows
-- Install the latest Python release
-- Go through the installation process
-- WARNING: When installing Python check the `add to the Path` option
-
-### Install Git
-- Go to the [Git's website](https://git-scm.com/)
-- Go to the downloads tab and select Windows
-- Click 64 bit if you are in a modern computer else pick the 32 bit one (You may need to look at It)
-- Go through the installation process
-
-## Setup
+### OpenSUSE
 ```bash
-mkdir $env:APPDATA\coterm
-cd $env:APPDATA\coterm
-git clone https://github.com/byTheInK/coterm.git
-cd .\coterm
-pip install -r requirements.txt
-[Environment]::SetEnvironmentVariable("PATH", $env:PATH + ";$env:APPDATA\coterm\coterm", [EnvironmentVariableTarget]::Machine)
+sudo zypper install python3
 ```
-After this close and open the terminal and type `coterm`.
 
-## Update
+### Arch Linux
 ```bash
-rm -Force "$env:APPDATA\coterm"
-mkdir $env:APPDATA\coterm
-cd $env:APPDATA\coterm
-git clone https://github.com/byTheInK/coterm.git
-cd .\coterm
-pip install -r requirements.txt
-[Environment]::SetEnvironmentVariable("PATH", $env:PATH + ";$env:APPDATA\coterm\coterm", [EnvironmentVariableTarget]::Machine)
+sudo pacman -S python3
 ```
-After this close and open the terminal and type `coterm`.
+
+### Ubuntu/Debian
+```bash
+sudo apt-get install python3
+```
+
+## Second Part: Git
+You need Git because you have to clone the CoTerm Github repository. Again, this part depends on your Linux distribution.
+
+### OpenSUSE
+```bash
+sudo zypper install git
+```
+
+### Arch Linux
+```bash
+sudo pacman -S git
+```
+
+### Ubuntu/Debian
+```bash
+sudo apt-get install git
+```
+
+## Final part: Cloning
+
+```bash
+cd ~
+git clone https://github.com/byTheInK/coterm.git
+cd coterm
+source setup.sh
+```
+
+# Running
+To run CoTerm, simply type the code below into your terminal.
+```bash
+source coterm.sh
+```
