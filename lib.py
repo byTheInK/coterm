@@ -3,10 +3,9 @@ import time
 import stat
 import bannerlib
 import psutil
-import pywinusb.hid as usb_hid
 import socket
 
-CLEAR_PREFIX: str = "cls"
+CLEAR_PREFIX: str = "clear"
 CURRENT: str = os.path.dirname(os.path.abspath(__file__))
 
 class CoTermErrors:
@@ -41,11 +40,6 @@ class general:
         if selection == "y":
             print("\nNAME: " + hostname)
             print("IP: " + IPAddr)
-
-    def list_usb():
-        devices = usb_hid.HidDeviceFilter().get_devices()
-        for device in devices:
-            print(f"Device: {device.product_name}, Vendor ID: {device.vendor_id}, Product ID: {device.product_id}") 
 
     def list_processes_smp():
         processes = psutil.process_iter(['pid', 'name', 'username'])
@@ -198,19 +192,19 @@ class config:
     def initialize_config():
         config_dict = {}
 
-        with open(f"{CURRENT}\\.settings\\.CLEAR_WITH_BANNER", "r") as file:
+        with open(f"{CURRENT}/.settings/.CLEAR_WITH_BANNER", "r") as file:
             config_dict["CLEAR_WITH_BANNER"] = True if file.read() == "true" else False
 
-        with open(f"{CURRENT}\\.settings\\.CREATE_WHEN_WRITING", "r") as file:
+        with open(f"{CURRENT}/.settings/.CREATE_WHEN_WRITING", "r") as file:
             config_dict["CREATE_WHEN_WRITING"] = True if file.read() == "true" else False
 
-        with open(f"{CURRENT}\\.settings\\.LINE_PER_PAGE", "r") as file:
+        with open(f"{CURRENT}/.settings/.LINE_PER_PAGE", "r") as file:
             config_dict["LINE_PER_PAGE"] = int(file.read())
 
-        with open(f"{CURRENT}\\.settings\\.BANNER_TYPE", "r") as file:
+        with open(f"{CURRENT}/.settings/.BANNER_TYPE", "r") as file:
             config_dict["BANNER_TYPE"] = file.read()
 
-        with open(f"{CURRENT}\\.settings\\.SPACE_AFTER_COMMAND", "r") as file:
+        with open(f"{CURRENT}/.settings/.SPACE_AFTER_COMMAND", "r") as file:
             config_dict["SPACE_AFTER_COMMAND"] = file.read()
         
         
@@ -232,13 +226,13 @@ class config:
             selection = input("Clear with banner: (true/false) ")
             
             if selection.lower() == "true":
-                with open(f"{CURRENT}\\.settings\\.CLEAR_WITH_BANNER", "w") as file:
+                with open(f"{CURRENT}/.settings/.CLEAR_WITH_BANNER", "w") as file:
                     file.write(selection.lower())
                 
                 return "CLEAR_WITH_BANNER", True
 
             if selection.lower() == "false": 
-                with open(f"{CURRENT}\\.settings\\.CLEAR_WITH_BANNER", "w") as file:
+                with open(f"{CURRENT}/.settings/.CLEAR_WITH_BANNER", "w") as file:
                     file.write(selection.lower())
 
                 return "CLEAR_WITH_BANNER", False
@@ -250,12 +244,12 @@ class config:
             selection = input("Create when writing: (true / false) ")
 
             if selection.lower() == "true": 
-                with open(f"{CURRENT}\\.settings\\.CREATE_WHEN_WRITING", "w") as file:
+                with open(f"{CURRENT}/.settings/.CREATE_WHEN_WRITING", "w") as file:
                     file.write(selection.lower())
 
                 return "CREATE_WHEN_WRITING", True
             if selection.lower() == "false":
-                with open(f"{CURRENT}\\.settings\\.CREATE_WHEN_WRITING", "w") as file:
+                with open(f"{CURRENT}/.settings/.CREATE_WHEN_WRITING", "w") as file:
                     file.write(selection.lower())
 
                 return "CREATE_WHEN_WRITING", False
@@ -268,7 +262,7 @@ class config:
             try: selection = int(selection)
             except Exception: return 1, 1
 
-            with open(f"{CURRENT}\\.settings\\.LINE_PER_PAGE", "w") as file:
+            with open(f"{CURRENT}/.settings/.LINE_PER_PAGE", "w") as file:
                 file.write(str(selection))
 
             return "LINE_PER_PAGE", selection
@@ -278,7 +272,7 @@ class config:
             selection = input("Banner type: ({}) ".format(bannerlib.BANNERS.get_options()))
 
             if selection in bannerlib.BANNERS.get_options(): 
-                with open(f"{CURRENT}\\.settings\\.BANNER_TYPE", "w") as file:
+                with open(f"{CURRENT}/.settings/.BANNER_TYPE", "w") as file:
                     file.write(selection)
 
                 return "BANNER_TYPE", selection
@@ -292,7 +286,7 @@ class config:
             try: selection = int(selection)
             except Exception: return 1, 1
 
-            with open(f"{CURRENT}\\.settings\\.SPACE_AFTER_COMMAND", "w") as file:
+            with open(f"{CURRENT}/.settings/.SPACE_AFTER_COMMAND", "w") as file:
                 file.write(str(selection))
 
             return "SPACE_AFTER_COMMAND", selection

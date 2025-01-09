@@ -18,7 +18,7 @@ class default:
 
 class var:
     WINDOWS: bool = os.name == "nt"
-    CLEAR_PREFIX: str = "cls"
+    CLEAR_PREFIX: str = "clear  "
     COTERM_DIR: str = lib.CURRENT
 
 class color:
@@ -49,28 +49,28 @@ class script:
     def clear(): os.system(var.CLEAR_PREFIX)
 
     def create_temporary_file(file_name: str):
-        with open(f"{var.COTERM_DIR}\\script_temp\\{file_name}", "x"): pass
+        with open(f"{var.COTERM_DIR}/script_temp/{file_name}", "x"): pass
     
     def append_temporary_file(file_name: str, content: str):
-        with open(f"{var.COTERM_DIR}\\script_temp\\{file_name}", "a") as file:
+        with open(f"{var.COTERM_DIR}/script_temp/{file_name}", "a") as file:
             file.write(content)
     
     def write_temporary_file(file_name: str, content: str):
-        with open(f"{var.COTERM_DIR}\\script_temp\\{file_name}", "w") as file:
+        with open(f"{var.COTERM_DIR}/script_temp/{file_name}", "w") as file:
             file.write(content)
     
     def delete_temporary_file(file_name: str):
-        os.remove(f"{var.COTERM_DIR}\\script_temp\\{file_name}")
+        os.remove(f"{var.COTERM_DIR}/script_temp/{file_name}")
     
     def read_temporary_file(file_name: str):
-        with open(f"{var.COTERM_DIR}\\script_temp\\{file_name}", "r") as file:
+        with open(f"{var.COTERM_DIR}/script_temp/{file_name}", "r") as file:
             return file.read()
 
 class Errors:
     Coterm404 = lib.CoTermErrors.CoTerm404
     CoTermPkgError = lib.CoTermErrors.CoTermPkgError
-    CotermExtraError = lib.CoTermErrors.CotermExtraError
-    CotermArgError = lib.CoTermErrors.CotermArgError
+    CotermArgError = lib.CoTermErrors.CoTermArgError
+    CoTermExtraError = lib.CoTermErrors.CoTermExtraError
 
 class printlib:
     cat = bannerlib.animallib.cat

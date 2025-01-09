@@ -1,4 +1,5 @@
 paramiko
+winregistry
 psutil
 pythonping
 colorama

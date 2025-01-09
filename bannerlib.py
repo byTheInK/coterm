@@ -2,12 +2,12 @@ import os
 from colorama import Fore as Foreground, init as coloroma_init
 coloroma_init()
 
-CLEAR_PREFIX: str = "cls"
+CLEAR_PREFIX: str = "clear"
 
 class BANNERS:
     def get_options():
         prefix = os.path.dirname(os.path.abspath(__file__))
-        new = os.listdir(f"{prefix}\\banners")
+        new = os.listdir(f"{prefix}/banners")
         for index, value in enumerate(new):
             new[index] = value[:-4]
         return new
@@ -24,7 +24,7 @@ class BANNERS:
 
     def print_banner_plus(name: str):
             prefix = os.path.dirname(os.path.abspath(__file__))
-            BANNERS.print_banner(f"{prefix}\\banners\\{name}.txt")
+            BANNERS.print_banner(f"{prefix}/banners/{name}.txt")
 
 class animallib:
      cow = r"""

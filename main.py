@@ -18,7 +18,7 @@ import wget
 from random import randint as random_number
 
 Clipboard: str = ""
-CLEAR_PREFIX: str = "cls"
+CLEAR_PREFIX: str = "clear"
 CURRENT: str = os.path.dirname(os.path.abspath(__file__))
 
 #CUSTOMIZABLE
@@ -54,7 +54,7 @@ class coterm(cmd.Cmd):
         BANNERS.print_banner_plus(banner_type)
 
     def do_opencwd(self, arg):
-        os.system("explorer .")
+        os.system("dolphin .")
 
     def do_run(self, arg):
         """Runs a script"""
@@ -75,14 +75,13 @@ class coterm(cmd.Cmd):
             "line_per_page":line_per_page,
             "complete_key": complete_key}
 
-        lang.main(f"{CURRENT}\\scripts\\{arg[0]}", arg[1:], _conf_list)
-
+        lang.main(f"{CURRENT}/scripts/{arg[0]}", arg[1:], _conf_list)
 
     def do_mkscript(self, arg):
         """Creates a script."""
         try:
             if arg[-3:] != ".py": arg += ".py"
-            with open(f"{CURRENT}\\scripts\\{arg}", "x"): pass
+            with open(f"{CURRENT}/scripts/{arg}", "x"): pass
             print("Created file {} sucsessfully.".format(arg))
         except FileExistsError as ERROR:
             print("FILE ALREADY EXISTS:\n{}".format(ERROR))
@@ -94,10 +93,10 @@ class coterm(cmd.Cmd):
         try:
             if arg[-3:] != ".py": arg += ".py"
 
-            if not os.path.exists(f"{CURRENT}\\scripts\\{arg}"): raise FileNotFoundError("{} not found".format(arg)); return
-            if not os.path.isfile(f"{CURRENT}\\scripts\\{arg}"): raise FileNotFoundError("{} is not a file".format(arg)); return
+            if not os.path.exists(f"{CURRENT}/scripts/{arg}"): raise FileNotFoundError("{} not found".format(arg)); return
+            if not os.path.isfile(f"{CURRENT}/scripts/{arg}"): raise FileNotFoundError("{} is not a file".format(arg)); return
 
-            os.system(f"notepad {CURRENT}\\scripts\\{arg}")
+            os.system(f"vim {CURRENT}/scripts/{arg}")
         except FileNotFoundError as ERROR:
             print("FILE NOT FOUND:\n{}".format(ERROR))
         except Exception as ERROR:
@@ -158,6 +157,7 @@ class coterm(cmd.Cmd):
     def do_wget(self, arg):
         try:
             wget.download(arg)
+            print()
         except Exception as ERROR:
             print(f"ERROR:\n{ERROR}")
 
@@ -178,18 +178,6 @@ class coterm(cmd.Cmd):
             except Exception as ERROR:
                 print(f"ERROR:\n{ERROR}")
 
-    def do_lnk(self, arg):
-        arg = shlex.split(arg)
-        if len(arg) < 2:
-            print("\n\n\n\tTHIS FUNCTION TAKES TWO ARGUMENTS!\n\n\n") 
-            return
-        else:
-            try:
-                lib.general.link(arg[0],arg[1])
-                print("File {} linked to {}".format(arg[0],arg[1]))
-            except Exception or OSError as ERROR:
-                print("ERROR:\n{}".format(ERROR))
-
     def do_cut(self, arg):
         global Clipboard
         try:
@@ -201,9 +189,6 @@ class coterm(cmd.Cmd):
             print("FILE NOT FOUND:\n{}".format(ERROR))
         except Exception as ERROR:
             print("ERROR:\n{}".format(ERROR))
-
-    def do_usb(self, arg):
-        lib.general.list_usb()
 
     def do_copy(self, arg):
         global Clipboard
@@ -404,8 +389,8 @@ class coterm(cmd.Cmd):
 
     def do_write(self, arg):
         """
-        Appends to a file.
-        append "Hello, World!" test.txt
+        Writes to a file.
+        write "Hello, World!" test.txt
         """
         if len(arg) < 2: 
             print("\n\n\n\tTHIS FUNCTION TAKES TWO ARGUMENTS!\n\n\n")
