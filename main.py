@@ -14,6 +14,7 @@ import subprocess
 import zipfile
 import tarfile
 import paramiko
+from pathlib import Path
 import psutil
 from pythonping import ping
 import wget
@@ -59,6 +60,44 @@ class coterm(cmd.Cmd):
         """Open current working directory."""
         os.system("dolphin .")
 
+    def do_chown(self, arg):
+        """
+        Changes the owner and the group of a file.
+        chown test.txt <userid> <groupid>
+        """
+
+        arg = shlex.split(arg)
+        chown_parser = argparse.ArgumentParser()
+        chown_parser.add_argument("-r", "--recursive", action="store_true", help="Changes the owner and the group of a file recursively.")
+        opts, args = chown_parser.parse_known_args(arg)
+
+        if len(args) < 3:
+            print("THIS FUNCTION TAKES THREE ARGUMENTS!")
+            return
+
+        file_path, user_id, group_id = args[0], args[1], args[2]
+
+        if opts.recursive:
+            try:
+                for root, dirs, files in os.walk(file_path):
+                    for name in dirs:
+                        shutil.chown(os.path.join(root, name), user=user_id, group=group_id)
+                    for name in files:
+                        shutil.chown(os.path.join(root, name), user=user_id, group=group_id)
+                print("\nChanged the owner and the group recursively.")
+            except FileNotFoundError as ERROR:
+                print("FILE NOT FOUND:\n{}".format(ERROR))
+            except Exception as ERROR:
+                print("ERROR:\n{}".format(ERROR))
+            return
+
+        try:
+            shutil.chown(file_path, user=user_id, group=group_id)
+            print("\nChanged the owner and the group.")
+        except FileNotFoundError as ERROR:
+            print("FILE NOT FOUND:\n{}".format(ERROR))
+        except Exception as ERROR:
+            print("ERROR:\n{}".format(ERROR))
 
     def do_run(self, arg):
         """Runs a script"""
@@ -244,19 +283,6 @@ class coterm(cmd.Cmd):
             print("Ended process sucsessfully")
         except Exception as error:
             print(f"ERROR:\n{error}")
-    
-    def do_sshlogin(self, arg):
-        arg = shlex.split(arg)
-        if len(arg) < 3:
-            print("THIS FUNCTION TAKES THREE ARGUMENTS!") 
-            return
-        try:
-            ssh = paramiko.SSHClient()
-            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(arg[0], username=arg[1], password=arg[2])
-            print("Connected to {} successfully.".format(arg[0]))
-        except Exception as ERROR:
-            print("ERROR:\n{}".format(ERROR))
 
     def do_ssh(self, arg):
         arg = shlex.split(arg)
@@ -595,19 +621,18 @@ class coterm(cmd.Cmd):
         except Exception as ERROR:
             print("ERROR:\n{}".format(ERROR))
 
-        def do_sys(self, arg):
-            """
-            Uses your terminal to execute commands.
-            sys notepad test.txt
-            """
-            try:
-                arg = shlex.split(arg)
-                subprocess.run(arg, shell=True)
+    def do_sys(self, arg):
+        """
+        Uses your terminal to execute commands.
+        sys notepad test.txt
+        """
+        try:
+            arg = shlex.split(arg)
+            subprocess.run(arg, shell=True)
 
-            except Exception as ERROR:
-                print("\n{}".format(ERROR))
+        except Exception as ERROR:
+            print("\n{}".format(ERROR))
                 
-    
     
 
     def do_random(self, arg):
