@@ -1,10 +1,9 @@
 #!/bin/bash
-set -e
 
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 
-if ! command -v python3 &> /dev/null; then
-    echo "Python 3 is not installed. Exiting."
+if ! command -v python3 &> /dev/null;  then
+    echo "Python 3 is not installed."
     exit 1
 fi
 
@@ -15,9 +14,10 @@ sleep 2
 source "$SCRIPT_DIR/venv/bin/activate"
 
 if ! "$SCRIPT_DIR/venv/bin/pip" install -r "$SCRIPT_DIR/requirements.txt"; then
-    echo "Failed to install required packages. Exiting."
+    echo "Failed to install required packages."
     exit 1
 fi
+
 echo "Installed required packages."
 sleep 2
 
@@ -30,5 +30,4 @@ fi
 
 chmod +x "SCRIPT_DIR/coterm"
 
-echo "Successfully installed CoTerm."
-sleep 1
+echo "Setup complete."

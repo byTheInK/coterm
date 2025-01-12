@@ -606,6 +606,9 @@ class coterm(cmd.Cmd):
 
             except Exception as ERROR:
                 print("\n{}".format(ERROR))
+                
+    
+    
 
     def do_random(self, arg):
         """Gives a random number between two numbers."""
