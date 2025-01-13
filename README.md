@@ -57,12 +57,8 @@ sudo apt-get install git
 ```bash
 cd ~
 git clone https://github.com/byTheInK/coterm.git
-cd coterm
 source setup.sh
 ```
 
 # Running
-To run CoTerm, simply type the code below into your terminal.
-```bash
-bash coterm
-```
+To run CoTerm, simply type `coterm` into your terminal.

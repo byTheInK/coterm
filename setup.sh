@@ -1,8 +1,8 @@
 #!/bin/bash
-
+set -e
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 
-if ! command -v python3 &> /dev/null;  then
+if ! command -v python3 &> /dev/null; then
     echo "Python 3 is not installed."
     exit 1
 fi
@@ -21,13 +21,20 @@ fi
 echo "Installed required packages."
 sleep 2
 
-if ! grep -q 'export PATH="~/coterm:$PATH"' ~/.bashrc; then
-    echo 'export PATH="~/coterm:$PATH"' >> ~/.bashrc
+if [ ! -f "$HOME/coterm" ]; then
+    cp "$SCRIPT_DIR/coterm" "$HOME/coterm"
+    chmod +x "$HOME/coterm"
+    echo "Copied coterm script to $HOME."
+else
+    echo "coterm script already exists in $HOME."
+fi
+
+if ! grep -q 'export PATH="$HOME/coterm:$PATH"' ~/.bashrc; then
+    echo 'export PATH="$HOME/coterm:$PATH"' >> ~/.bashrc
     echo "Updated PATH in ~/.bashrc."
 else
     echo "PATH already updated in ~/.bashrc."
 fi
 
-chmod +x "SCRIPT_DIR/coterm"
-
 echo "Setup complete."
+deactivate
