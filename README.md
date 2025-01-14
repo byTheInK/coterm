@@ -57,7 +57,8 @@ sudo apt-get install git
 ```bash
 cd ~
 git clone https://github.com/byTheInK/coterm.git
-source setup.sh
+cd ~/coterm
+sh setup.sh
 ```
 
 # Running
