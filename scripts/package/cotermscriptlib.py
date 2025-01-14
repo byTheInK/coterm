@@ -2,11 +2,11 @@ import sys
 from pathlib import Path
 import os
 import colorama
+import bannerlib
+import lib
 
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
-import bannerlib
-import lib
 
 class default:
     clear_with_banner: bool = True
@@ -16,10 +16,12 @@ class default:
     complete_key: str = "tab"
     space_after_command: int = 0
 
+
 class var:
     WINDOWS: bool = os.name == "nt"
     CLEAR_PREFIX: str = "clear  "
     COTERM_DIR: str = lib.CURRENT
+
 
 class color:
     class Foreground:
@@ -32,7 +34,7 @@ class color:
         WHITE: str = colorama.Fore.WHITE
         BLACK: str = colorama.Fore.BLACK
         RESET: str = colorama.Fore.RESET
-    
+
     class Background:
         RED: str = colorama.Back.RED
         GREEN: str = colorama.Back.GREEN
@@ -44,33 +46,40 @@ class color:
         BLACK: str = colorama.Back.BLACK
         RESET: str = colorama.Back.RESET
 
+
 class script:
-    def banner(TYPE): bannerlib.BANNERS.print_banner_plus(TYPE)
-    def clear(): os.system(var.CLEAR_PREFIX)
+    def banner(TYPE):
+        bannerlib.BANNERS.print_banner_plus(TYPE)
+
+    def clear():
+        os.system(var.CLEAR_PREFIX)
 
     def create_temporary_file(file_name: str):
-        with open(f"{var.COTERM_DIR}/script_temp/{file_name}", "x"): pass
-    
+        with open(f"{var.COTERM_DIR}/script_temp/{file_name}", "x"):
+            pass
+
     def append_temporary_file(file_name: str, content: str):
         with open(f"{var.COTERM_DIR}/script_temp/{file_name}", "a") as file:
             file.write(content)
-    
+
     def write_temporary_file(file_name: str, content: str):
         with open(f"{var.COTERM_DIR}/script_temp/{file_name}", "w") as file:
             file.write(content)
-    
+
     def delete_temporary_file(file_name: str):
         os.remove(f"{var.COTERM_DIR}/script_temp/{file_name}")
-    
+
     def read_temporary_file(file_name: str):
         with open(f"{var.COTERM_DIR}/script_temp/{file_name}", "r") as file:
             return file.read()
+
 
 class Errors:
     Coterm404 = lib.CoTermErrors.CoTerm404
     CoTermPkgError = lib.CoTermErrors.CoTermPkgError
     CotermArgError = lib.CoTermErrors.CoTermArgError
     CoTermExtraError = lib.CoTermErrors.CoTermExtraError
+
 
 class printlib:
     cat = bannerlib.animallib.cat

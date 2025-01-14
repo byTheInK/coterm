@@ -7,28 +7,35 @@ import psutil
 import socket
 import json
 from shlex import split
-import psutil
 
 CLEAR_PREFIX: str = "clear"
 CURRENT: str = os.path.dirname(os.path.abspath(__file__))
+NoProcess = psutil.NoSuchProcess
+AccessDenied = psutil.AccessDenied
+ZombieProcess = psutil.ZombieProcess
+
 
 class CoTermErrors:
     class CoTermExtraError(Exception):
         def __init__(self, message=""):
             self.message = message
             super().__init__(self.message)
+
     class CoTermPkgError(Exception):
         def __init__(self, message=""):
             self.message = message
             super().__init__(self.message)
+
     class CoTermArgError(Exception):
         def __init__(self, message=""):
             self.message = message
             super().__init__(self.message)
+
     class CoTerm404(Exception):
         def __init__(self, message=""):
             self.message = message
             super().__init__(self.message)
+
 
 class general:
     def endp(PROCNAME):
@@ -50,11 +57,28 @@ class general:
 
         for process in processes:
             try:
-                print(f"PID: {process.info['pid']}, Name: {process.info['name']}, User: {process.info['username']}")
-            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess): pass
+                pid = process.info['pid']
+                name = process.info['name']
+                username = process.info['username']
+
+                print(f"PID: {pid}, Name: {name}, User: {username}")
+
+            except (NoProcess, AccessDenied, ZombieProcess):
+                pass
 
     def list_processes():
-        processes = psutil.process_iter(['pid', 'name', 'username', 'status', 'cpu_percent', 'memory_info', 'create_time', 'num_threads'])
+        processes = psutil.process_iter(
+            [
+                'pid', 
+                'name',
+                'username',
+                'status',
+                'cpu_percent',
+                'memory_info',
+                'create_time',
+                'num_threads'
+            ]
+        )
 
         for process in processes:
             try:
@@ -79,10 +103,22 @@ class general:
                     print(f"Number of Threads: {num_threads}")
                     print("-" * 40)
                     
-            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess): pass
+            except (NoProcess, AccessDenied, ZombieProcess):
+                pass
 
     def list_processes_ws():
-        processes = psutil.process_iter(['pid', 'name', 'username', 'status', 'cpu_percent', 'memory_info', 'create_time', 'num_threads'])
+        processes = psutil.process_iter(
+            [
+                'pid',
+                'name',
+                'username',
+                'status',
+                'cpu_percent',
+                'memory_info',
+                'create_time',
+                'num_threads'
+            ]
+        )
 
         for process in processes:
             try:
@@ -105,7 +141,8 @@ class general:
                 print(f"Number of Threads: {num_threads}")
                 print("-" * 40)
                 
-            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess): pass
+            except (NoProcess, AccessDenied, ZombieProcess):
+                pass
 
     def memory():
         memory = psutil.virtual_memory()
@@ -144,20 +181,25 @@ class general:
 
             if current_line < total_lines:
                 input("(Press Enter to continue or Ctrl+C to exit)")
+
         input("(Press Enter to continue or Ctrl+C to exit)")
         os.system(CLEAR_PREFIX)
-    
+
     def getvar(arg):
         try:
             with open("variables.json", "r") as file:
                 file = json.load(file)
+
                 try:
                     print(file[arg])
                     return file[arg]
+
                 except KeyError as ERROR:
                     print("KEY ERROR:\n{}".format(ERROR))
+
         except FileNotFoundError as ERROR:
             print("FILE NOT FOUND:\n{}".format(ERROR))
+
         except Exception as ERROR:
             print("ERROR:\n{}".format(ERROR))
 
@@ -166,35 +208,42 @@ class general:
             try:
                 with open("variables.json", "r") as file:
                     data = json.load(file)
+
             except json.JSONDecodeError:
                 data = {}
 
-            key, value = arg.split()
+            key, value = split(arg)
             data[key] = value
 
             with open("variables.json", "w") as file:
                 json.dump(data, file)
+
         except FileNotFoundError as ERROR:
             print("FILE NOT FOUND:\n{}".format(ERROR))
+
         except Exception as ERROR:
             print("ERROR:\n{}".format(ERROR))
 
     def ls_long(dir):
         try:
             entries = os.listdir(dir)
+
         except FileNotFoundError as ERROR:
             print("FILE NOT FOUND:\n{}".format(ERROR))
             return
+
         except PermissionError as ERROR:
             print("PERMISSION DENIED:\n{}".format(ERROR))
             return
 
         for entry in entries:
             full_path = os.path.join(dir, entry)
+
             try:
                 stats = os.stat(full_path)
 
-            except FileNotFoundError: continue
+            except FileNotFoundError:
+                continue
 
             except PermissionError:
                 print("PERMISSION DENIED:\n{}".format(ERROR))
@@ -202,6 +251,7 @@ class general:
 
             mode = stats.st_mode
             file_type = '-' if stat.S_ISREG(mode) else 'd' if stat.S_ISDIR(mode) else 'l' if stat.S_ISLNK(mode) else '?'
+
             permissions = ''.join([
                 'r' if mode & mask else '-'
                 for mask in (stat.S_IRUSR, stat.S_IWUSR, stat.S_IXUSR,
@@ -284,8 +334,7 @@ class config:
 
         with open(f"{CURRENT}/.settings/.SPACE_AFTER_COMMAND", "r") as file:
             config_dict["SPACE_AFTER_COMMAND"] = file.read()
-        
-        
+
         return config_dict
 
     def general():
