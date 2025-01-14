@@ -34,6 +34,7 @@ else
 fi
 
 chmod +x "$HOME/coterm/coterm"
+echo "{}" > variabes.json
 
 echo "Setup complete."
 deactivate

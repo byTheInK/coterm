@@ -428,6 +428,9 @@ class coterm(cmd.Cmd):
         except Exception as ERROR:
             print("ERROR:\n{}".format(ERROR))
 
+    def do_getvar(self, arg): lib.general.getvar(arg)
+    def do_setvar(self, arg): lib.general.setvar(arg)
+
     def do_read(self, arg): self.do_cat(arg)
 
     def do_append(self, arg):
