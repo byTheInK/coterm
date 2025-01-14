@@ -10,7 +10,6 @@ from getpass import getuser
 import requests
 import shutil
 from bannerlib import BANNERS
-import subprocess
 import zipfile
 import tarfile
 import paramiko
@@ -630,9 +629,7 @@ class coterm(cmd.Cmd):
         sys notepad test.txt
         """
         try:
-            arg = shlex.split(arg)
-            subprocess.run(arg, shell=True)
-
+            os.system(arg)
         except Exception as ERROR:
             print("\n{}".format(ERROR))
                 
