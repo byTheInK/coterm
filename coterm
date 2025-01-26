@@ -2,6 +2,7 @@
 set -e
 
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+cd $SCRIPT_DIR
 
 if [ ! -f "$SCRIPT_DIR/venv/bin/python" ]; then
     echo "Can't find Python Virtual Enviorment."

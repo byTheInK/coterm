@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
-cd ~/coterm
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+cd $SCRIPT_DIR
 
 if ! command -v python3 &> /dev/null; then
     echo "Python 3 is not installed."
@@ -26,15 +27,10 @@ fi
 echo "Installed required packages."
 sleep 2
 
-if ! grep -q 'export PATH="$HOME/coterm:$PATH"' ~/.bashrc; then
-    echo 'export PATH="$HOME/coterm:$PATH"' >> ~/.bashrc
-    echo "Updated PATH in ~/.bashrc."
-else
-    echo "PATH already updated in ~/.bashrc."
-fi
-
 chmod +x "$HOME/coterm/coterm"
 echo "{}" > variabes.json
+
+cp coterm /usr/bin/
 
 echo "Setup complete."
 deactivate
